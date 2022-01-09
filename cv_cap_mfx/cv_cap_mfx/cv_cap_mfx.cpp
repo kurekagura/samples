@@ -3,9 +3,9 @@
 
 int main()
 {
-	//cv::VideoCapture capture("C:\\dev\\samplevideo\\Big_Buck_Bunny_360_10s_1MB.mp4", cv::CAP_FFMPEG);
+	//cv::VideoCapture capture("C:\\dev\\samplevideo\\Big_Buck_Bunny_360_10s_1MB.mp4", cv::CAP_MSMF);
 	//CAP_INTEL_MFXは、mp4などのコンテナには未対応（raw(.264)のみに対応）。
-	cv::VideoCapture capture("C:\\dev\\samplevideo\\test.264", cv::CAP_INTEL_MFX);
+	cv::VideoCapture capture("C:\\dev\\samplevideo\\Big_Buck_Bunny_360_10s_1MB.264", cv::CAP_INTEL_MFX);
 
 	//cv::VideoCapture capture(0, cv::CAP_MSMF); //OK
 	//cv::VideoCapture capture(0, cv::CAP_DSHOW); //OK
@@ -25,12 +25,12 @@ int main()
 
 	int out_fourcc = cv::VideoWriter::fourcc('H', '2', '6', '4');
 	double out_fps = 30;
-	//cv::VideoWriter writer("out_CAP_FFMPEG.mp4", cv::CAP_FFMPEG, out_fourcc, fps, cv::Size(width, height), true);
-
-	cv::VideoWriter writer("C:\\dev\\samplevideo\\out_CAP_INTEL_MFX.264", cv::CAP_INTEL_MFX, out_fourcc, out_fps, cv::Size(width, height), true);
+	
+	cv::VideoWriter writer("C:\\dev\\samplevideo\\out_CAP_MSMF.mp4", cv::CAP_MSMF, out_fourcc, out_fps, cv::Size(width, height), true);
+	//cv::VideoWriter writer("C:\\dev\\samplevideo\\out_CAP_INTEL_MFX.264", cv::CAP_INTEL_MFX, out_fourcc, out_fps, cv::Size(width, height), true);
 
 	if (!writer.isOpened())
-		std::cout << "* Failed to open VideoWriter" << std::endl;
+		std::cerr << "Error : to open VideoWriter" << std::endl;
 
 	while (true)
 	{
@@ -39,7 +39,7 @@ int main()
 		if (frame.empty())
 			break;
 
-		cv::imshow("showing", frame);
+		cv::imshow("cv_cap_mfx_window", frame);
 
 		if (cv::waitKey(1) == 'q')
 			break;
