@@ -1,32 +1,44 @@
 ﻿#include <iostream>
 #include <opencv2\opencv.hpp>
 
-void play_to_validate(const cv::String outputPath) {
+/// <summary>
+/// 
+/// </summary>
+/// <param name="decoderElement">QSV->d3d11h264device1dec, NVCODEC->d3d11h264dec or nvh264dec</param>
+/// <param name="outputPath"></param>
+void play_to_validate(const cv::String decoderElement, const cv::String outputPath) {
 
-	cv::String gst_cmd_cap("filesrc location=\"");
-	gst_cmd_cap += outputPath;
-	gst_cmd_cap += "\" !h264parse !d3d11h264device1dec !videoconvert !appsink";
+	cv::String gst_cmd_cap = cv::format("filesrc location=\"%s\" !h264parse !%s !videoconvert !appsink", outputPath.c_str(), decoderElement.c_str());
 	cv::VideoCapture capture(gst_cmd_cap, cv::CAP_GSTREAMER);
 
+	const cv::String windName = cv::format("Validating by %s", decoderElement.c_str());
 	while (true)
 	{
 		cv::Mat cvmat;
 		if (!capture.read(cvmat))
 			break;
 
-		cv::imshow("Validating:" + outputPath, cvmat);
+		cv::imshow(windName, cvmat);
 
 		if (cv::waitKey(1) == 'q')
 			break;
 	}
 }
 
+/*
+* I found HW decoder in "d3d11" and HW encoder in "mediafoundation".
+* I found nvh264dec and nvh264encin "nvcodec".
+*/
 int main()
 {
 	std::cout << cv::getBuildInformation() << std::endl;
 
-	//cv::String gst_cmd_cap("videotestsrc ! appsink");
-	cv::String gst_cmd_cap("filesrc location=\"C:\\\\dev\\\\samplevideo\\\\input.264\" !h264parse !d3d11h264device1dec !videoconvert !appsink");
+	//QSV->d3d11h264device1dec, NVCODEC->d3d11h264dec or nvh264dec
+	const cv::String decoderElement = "d3d11h264device1dec";
+	//QSV->mfh264device1enc, NVCODEC->mfh264enc or nvh264enc
+	const cv::String encoderElement = "mfh264device1enc";
+
+	cv::String gst_cmd_cap = cv::format("filesrc location=\"C:\\\\dev\\\\samplevideo\\\\input.264\" !h264parse !%s !videoconvert !appsink", decoderElement.c_str());
 	cv::VideoCapture capture(gst_cmd_cap, cv::CAP_GSTREAMER);
 
 	if (!capture.isOpened())
@@ -46,22 +58,21 @@ int main()
 	double out_fps = fps;
 
 	const cv::String outputPath("C:\\\\dev\\\\samplevideo\\\\out-cv_cap_gst.264");
-	cv::String gst_cmd_writer("appsrc !videoconvert !mfh264device1enc !filesink location=\"");
-	gst_cmd_writer += outputPath;
-	gst_cmd_writer += "\"";
+
+	cv::String gst_cmd_writer = cv::format("appsrc !videoconvert !%s !filesink location=\"%s\"", encoderElement.c_str(), outputPath.c_str());
 	cv::VideoWriter writer(gst_cmd_writer, cv::CAP_GSTREAMER, out_fourcc, out_fps, cv::Size(width, height), true);
-	
+
 	if (!writer.isOpened())
 		std::cerr << "Error : to open VideoWriter(CAP_GSTREAMER)" << std::endl;
 
-	const cv::String windowName("window1 - cv_cap_gst");
+	const cv::String windName = cv::format("Dec by %s Enc by %s", decoderElement.c_str(), encoderElement.c_str());
 	while (true)
 	{
 		cv::Mat cvmat;
 		if (!capture.read(cvmat))
 			break;
 
-		cv::imshow(windowName, cvmat);
+		cv::imshow(windName, cvmat);
 
 		if (cv::waitKey(1) == 'q')
 			break;
@@ -70,9 +81,9 @@ int main()
 			writer.write(cvmat);
 	}
 
-	cv::destroyWindow(windowName);
+	cv::destroyWindow(windName);
 
-	play_to_validate(outputPath);
+	play_to_validate(decoderElement, outputPath);
 
 	return 0;
 }
