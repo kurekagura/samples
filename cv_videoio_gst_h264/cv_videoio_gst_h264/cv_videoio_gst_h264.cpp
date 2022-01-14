@@ -83,15 +83,15 @@ void encode(const std::string encoderElement, const std::vector<std::unique_ptr<
 	cv::String gst_cmd_writer;
 	if (encoderElement == "mfh264device1enc")
 	{
-		//capsfilterがあると失敗する。無くてもyuv420pになる。
-		gst_cmd_writer = cv::format("appsrc !videoconvert !%s !h264parse%s !filesink location=\"%s\"",
+		//format=NV12。無くてもyuv420pになる。
+		gst_cmd_writer = cv::format("appsrc !videoconvert !video/x-raw,format=NV12 !%s !h264parse%s !filesink location=\"%s\"",
 			encoderElement.c_str(),
 			output_mp4 ? " !mp4mux" : "",
 			outputPath.c_str());
 	}
 	else if (encoderElement == "mfh264enc") {
-		//capsfilterがあると失敗する。無くてもyuv420pになる。
-		gst_cmd_writer = cv::format("appsrc !videoconvert !%s !h264parse%s !filesink location=\"%s\"",
+		//format=NV12。無くてもyuv420pになる。
+		gst_cmd_writer = cv::format("appsrc !videoconvert !video/x-raw,format=NV12 !%s !h264parse%s !filesink location=\"%s\"",
 			encoderElement.c_str(),
 			output_mp4 ? " !mp4mux" : "",
 			outputPath.c_str());
@@ -108,7 +108,7 @@ void encode(const std::string encoderElement, const std::vector<std::unique_ptr<
 
 		//capsfilterが有っても成功はする。無くてもyuv420pになる。
 		//[OpenH264] this = 0x000001C33DF83EA0, Error:CWelsH264SVCEncoder::EncodeFrame(), cmInitParaError.
-		gst_cmd_writer = cv::format("appsrc !videoconvert !%s !h264parse%s !filesink location=\"%s\"",
+		gst_cmd_writer = cv::format("appsrc !videoconvert !video/x-raw,format=I420 !%s !h264parse%s !filesink location=\"%s\"",
 			encoderElement.c_str(),
 			output_mp4 ? " !mp4mux" : "",
 			outputPath.c_str());
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
 			const cv::String outputPath = cv::format("C:\\\\dev\\\\samplevideo\\\\test-cv_videoio_gst_h264\\\\DecBy-%s-EncBy-%s.%s",
 				target_decoder.c_str(), encoderElement.c_str(), output_mp4 ? "mp4" : "264");
 
-			encode(encoderElement, targetFrames, outputPath, input_mp4, input_width, input_height, input_fps);
+			encode(encoderElement, targetFrames, outputPath, output_mp4, input_width, input_height, input_fps);
 		}
 	}
 	return 0;
