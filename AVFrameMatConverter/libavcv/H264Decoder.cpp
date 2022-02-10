@@ -65,25 +65,33 @@ H264Decoder::H264Decoder(const char* mp4_path, const char* decoder_name) {
 }
 
 H264Decoder::~H264Decoder() {
-	if (swsctx != nullptr)
-		sws_freeContext(swsctx);
 	if (avcodecctx != nullptr)
 		avcodec_free_context(&avcodecctx);
 	if (avfmtctx != nullptr)
 		avformat_close_input(&avfmtctx);
 }
 
-std::vector<cv::Mat>  H264Decoder::decode() {
+/// <summary>
+/// "h264_qsv"の場合，エンコード前後で結果が異なる（YUV420P→NV12）．
+/// </summary>
+/// <returns></returns>
+AVPixelFormat H264Decoder::pix_fmt() {
+	if (avcodecctx == nullptr)
+		throw "avcodecctx is null.";
 
-	std::vector<cv::Mat> matVec;
+	return avcodecctx->pix_fmt;
+}
 
-	// Store a decoded frame.
-	AVFrame* frame = av_frame_alloc();
-	AVPacket avpacket = AVPacket();
+std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> H264Decoder::decode() {
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
+
+	//スタックに１つのみ確保
+	AVPacket avpacket;
+	//AVPacket* avpakcet = new AVPacket(); //ヒープでもよさそう
 
 	int packet_counter = 0;
 	int frame_counter = 0;
-	std::cout << std::endl;
+
 	while (av_read_frame(avfmtctx, &avpacket) == 0) {
 		//0:OK, <0:EOF又はエラー（エラーの場合はpacketが空）
 		if (avpacket.stream_index == avstream->index) {
@@ -93,45 +101,38 @@ std::vector<cv::Mat>  H264Decoder::decode() {
 
 			packet_counter++;
 
-			swsctx = sws_getCachedContext
-			(
-				swsctx,
-				avstream->codecpar->width,
-				avstream->codecpar->height,
-				avcodecctx->pix_fmt,
-				avstream->codecpar->width,
-				avstream->codecpar->height,
-				AVPixelFormat::AV_PIX_FMT_BGR24,
-				SWS_BICUBIC,
-				nullptr,
-				nullptr,
-				nullptr
-			);
-
 			//デコーダに１パケット渡しても（avcodec_send_packet）、必ず１枚のフレームが取得できるとは限らない（avcodec_receive_frame）。
 			//Bフレームが使われていると、数フレーム分のパケットが揃って初めて、該当する複数のデコードフレームを受け取れる。
-			int ret = 0;
 			do {
+				//ここで確保
+				AVFrame* frame = av_frame_alloc();
 				//取り出せるフレームが存在する(戻り値0)の間、繰り返す。
-				ret = avcodec_receive_frame(avcodecctx, frame);
+				int ret = avcodec_receive_frame(avcodecctx, frame);
 				//std::cout << "avcodec_receive_frame returned (" << ret << ")" << std::endl;
-				if (ret != 0)
+				if (ret == 0)
+				{
+					const cv::String logstr = cv::format("NO=%d pict_type=%c pts=%d pkt_dts=%d %s",
+						frame_counter,
+						av_get_picture_type_char(frame->pict_type), frame->pts, frame->pkt_dts,
+						frame->pict_type == AVPictureType::AV_PICTURE_TYPE_I ? " ●" : ""
+					);
+					std::cout << logstr << std::endl;
+
+					//std::unique_ptr<AVFrame, deleter_for_AVFrame> pframe(frame);
+					//avframeVec.push_back(std::move(pframe));
+					avframeVec.push_back(std::unique_ptr<AVFrame, deleter_for_AVFrame>(frame));
+					frame_counter++;
+				}
+				else
+				{
+					av_frame_free(&frame); //フレームが取得できなかった場合はここで解放
 					break;
-
-				const cv::String logstr = cv::format("NO=%d pict_type=%c pts=%d pkt_dts=%d",
-					frame_counter,
-					av_get_picture_type_char(frame->pict_type),frame->pts, frame->pkt_dts);
-				std::cout << logstr << std::endl;
-
-				auto mat = convert_avframe_to_mat(swsctx, frame, AVPixelFormat::AV_PIX_FMT_BGR24);
-				matVec.push_back(mat);
-
-				frame_counter++;
-
+				}
 			} while (true);
 		}
 		av_packet_unref(&avpacket);
 	}
+	//av_packet_free(&avpacket);
 
 	// nullptrを渡して、デコーダをフラッシュする。
 	//std::cout << std::endl;
@@ -140,26 +141,58 @@ std::vector<cv::Mat>  H264Decoder::decode() {
 		throw "Failed:: avcodec_send_packet";
 	}
 
-	int ret = 0;
 	do {
-		ret = avcodec_receive_frame(avcodecctx, frame);
+		// Store a decoded frame.
+		AVFrame* frame = av_frame_alloc();
+		int ret = avcodec_receive_frame(avcodecctx, frame);
 		if (ret == 0)
 		{
 			const cv::String logstr = cv::format("NO=%d pict_type=%c pts=%d pkt_dts=%d",
 				frame_counter,
 				av_get_picture_type_char(frame->pict_type), frame->pts, frame->pkt_dts);
 			std::cout << logstr << std::endl;
-			
+
+			avframeVec.push_back(std::unique_ptr<AVFrame, deleter_for_AVFrame>(frame));
 			frame_counter++;
-
-			//if (!cv::imwrite(bmpfile, mat))
-			//{
-			//	cerr << "failed to 'imwrite'" << endl;
-			//}
 		}
-	} while (ret == 0);
+		else
+		{
+			av_frame_free(&frame);
+			break;
+		}
+	} while (true);
 
-	av_frame_free(&frame);
+	return avframeVec;
+}
 
+std::vector<cv::Mat>  H264Decoder::decode_to_mat() {
+
+	SwsContext* swsctx = nullptr;
+
+	std::vector<cv::Mat> matVec;
+
+	auto avframeVec = this->decode();
+
+	for (auto& avframe : avframeVec) {
+		swsctx = sws_getCachedContext
+		(
+			swsctx,
+			avframe->width,
+			avframe->height,
+			avcodecctx->pix_fmt,
+			avframe->width,
+			avframe->height,
+			AVPixelFormat::AV_PIX_FMT_BGR24,
+			SWS_BICUBIC,
+			nullptr,
+			nullptr,
+			nullptr
+		);
+
+		auto mat = convert_avframe_to_mat(swsctx, avframe.get(), AVPixelFormat::AV_PIX_FMT_BGR24);
+		matVec.push_back(mat);
+	}
+
+	sws_freeContext(swsctx);
 	return matVec;
 }

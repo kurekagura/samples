@@ -1,5 +1,6 @@
 ﻿#include <memory>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <filesystem> //C++17
 
@@ -19,8 +20,6 @@ extern "C" {
 namespace fs = std::filesystem;
 int main(int argc, char* argv[])
 {
-	using namespace std;
-
 	cv::String logstr;
 
 	if (argc < 3) {
@@ -28,24 +27,24 @@ int main(int argc, char* argv[])
 		std::cerr << "Error: 第二引数に動画の出力先ファイルを指定して下さい(.mp4)。" << std::endl;
 		return -1;
 	}
-	const string basedir = argv[1];
-	const string outputFileName = argv[2];
+	const std::string basedir = argv[1];
+	const std::string outputFileName = argv[2];
 
 	// 連番画像ファイルの一覧取得・ソート
-	vector<string> bmpVec;
+	std::vector<std::string> bmpVec;
 	for (const auto& entry : fs::directory_iterator(basedir))
 		bmpVec.push_back(entry.path().string());
 
-	sort(bmpVec.begin(), bmpVec.end(), [](string& s1, string& s2) { return s1 < s2; });
+	sort(bmpVec.begin(), bmpVec.end(), [](std::string& s1, std::string& s2) { return s1 < s2; });
 
 	// 連番画像ファイルをMatに読み込む
-	vector<cv::Mat> matVec;
+	std::vector<cv::Mat> matVec;
 	for (const auto& afile : bmpVec) {
-		cout << afile << endl;
+		std::cout << afile << std::endl;
 		cv::Mat mat = cv::imread(afile);
 		if (mat.empty())
 		{
-			cerr << "Failed: Mat is empty." << endl;
+			std::cerr << "Failed: Mat is empty." << std::endl;
 			return -1;
 		}
 		matVec.push_back(mat);
@@ -64,7 +63,7 @@ int main(int argc, char* argv[])
 
 	// 色空間変換を行い、Mat→AVFrameにする。
 	// AVFrameは独自のdeletorを定義
-	vector<unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
 	for (const auto& amat : matVec) {
 		//フレーム毎にサイズがことなったらどうなる？
 		swsctx = sws_getCachedContext
@@ -82,14 +81,14 @@ int main(int argc, char* argv[])
 			nullptr
 		);
 		// 色空間変換と型変換を行う
-		std::unique_ptr<AVFrame, deleter_for_AVFrame> dstframe(convert_mat_to_avframe(swsctx, amat, dst_pix_fmt));
+		std::unique_ptr<AVFrame, deleter_for_AVFrame> dstframe(&convert_mat_to_avframe(swsctx, amat, dst_pix_fmt));
 		avframeVec.push_back(std::move(dstframe));
 
 		//確認用の表示
 		cv::imshow("Press 'q' to stop", amat);
 
 		if (cv::waitKey(1) == 'q') {
-			cout << "Info: Program aborted." << endl;
+			std::cout << "Info: Program aborted." << std::endl;
 		}
 	}
 
@@ -190,7 +189,7 @@ int main(int argc, char* argv[])
 	logstr = cv::format("avcodecctx->time_base = {%d, %d}\navstream->time_base = {%d, %d}",
 		avcodecctx->time_base.num, avcodecctx->time_base.den,
 		avstream->time_base.num, avstream->time_base.den);
-	cout << logstr << endl;
+	std::cout << logstr << std::endl;
 
 	// avformat_write_headerの呼び出しにより，avstream->time_baseが {1,設定値} に書き変わる.numに1以外を設定しても意味がない？
 	// 未設定{0,0}の場合は{1, 90000}が設定される.
@@ -202,7 +201,7 @@ int main(int argc, char* argv[])
 	logstr = cv::format("avcodecctx->time_base = {%d, %d}\navstream->time_base = {%d, %d}",
 		avcodecctx->time_base.num, avcodecctx->time_base.den,
 		avstream->time_base.num, avstream->time_base.den);
-	cout << logstr << endl;
+	std::cout << logstr << std::endl;
 
 	//エンコード
 	int encoded_count = 0;
@@ -234,7 +233,7 @@ int main(int argc, char* argv[])
 			//↓呼び出すと動画が壊れる
 			//av_packet_rescale_ts(&pkt, avcodecctx->time_base, avstream->time_base);
 			//エンコード書き込み
-			cout << "pkt pts=" << pkt.pts << " dts(自動設定)=" << pkt.dts << " duration=" << pkt.duration << endl;
+			std::cout << "pkt pts=" << pkt.pts << " dts(自動設定)=" << pkt.dts << " duration=" << pkt.duration << std::endl;
 			int ret = av_interleaved_write_frame(avfmtctx, &pkt);
 			if (ret != 0) {
 				std::cerr << "Failed: av_interleaved_write_frame" << std::endl;
@@ -265,7 +264,7 @@ int main(int argc, char* argv[])
 		//↓呼び出すと動画が壊れる
 		//av_packet_rescale_ts(&pkt, avcodecctx->time_base, avstream->time_base);
 		//エンコード書き込み
-		cout << "pkt pts=" << pkt.pts << " dts(自動設定)=" << pkt.dts << " duration=" << pkt.duration << endl;
+		std::cout << "pkt pts=" << pkt.pts << " dts(自動設定)=" << pkt.dts << " duration=" << pkt.duration << std::endl;
 		if (av_interleaved_write_frame(avfmtctx, &pkt) != 0) {
 			std::cerr << "Failed: av_interleaved_write_frame" << std::endl;
 			//return -1;
@@ -285,18 +284,53 @@ int main(int argc, char* argv[])
 	avio_closep(&avioctx);
 
 	// エンコード出力ファイルの検証・再生
-	// "h264" or "h264_qsv" or "h264_cuvid"
-	auto mydecoder = std::make_unique<H264Decoder>(outputFileName.c_str(), "h264_qsv");
-	auto decodedMatVec = mydecoder->decode();
+	// エンコーダ: "h264" or "h264_qsv" or "h264_cuvid"
+	auto mydecoder = std::make_unique<H264Decoder>(outputFileName.c_str(), "h264");
+	AVPixelFormat src_pix_fmt = mydecoder->pix_fmt(); //デコーダによって値が異なる.YUV420PやNV12．
+	auto decodedAVFrameVec = mydecoder->decode();
+	AVPixelFormat src_pix_fmt2 = mydecoder->pix_fmt(); //呼び出しタイミングによって結果が異なる．
 
-	for (auto& amat : decodedMatVec) {
+	SwsContext* swsctx2 = nullptr;
+
+	std::ostringstream oss;
+	oss << "I Frames => ";
+
+	for (auto it = decodedAVFrameVec.begin(); it != decodedAVFrameVec.end(); ++it) {
+		int idx = std::distance(decodedAVFrameVec.begin(), it);
+
+		auto& aframe = *it;
+		swsctx2 = sws_getCachedContext
+		(
+			swsctx2,
+			aframe->width,
+			aframe->height,
+			src_pix_fmt2,
+			aframe->width,
+			aframe->height,
+			AVPixelFormat::AV_PIX_FMT_BGR24,
+			SWS_BICUBIC,
+			nullptr,
+			nullptr,
+			nullptr
+		);
+
+		auto amat = convert_avframe_to_mat(swsctx2, aframe.get(), AVPixelFormat::AV_PIX_FMT_BGR24);
+
+		if (aframe->pict_type == AVPictureType::AV_PICTURE_TYPE_I)
+			oss << idx << ",";
+
 		//確認用の表示
 		cv::imshow("Validating: Press 'q' to stop", amat);
 
 		if (cv::waitKey(1) == 'q') {
-			cout << "Info: Program aborted." << endl;
+			std::cout << "Info: Program aborted." << std::endl;
 		}
 	}
+
+	oss << std::flush;
+	std::cout << oss.str() << std::endl;
+
+	sws_freeContext(swsctx2);
 
 	return 0;
 }

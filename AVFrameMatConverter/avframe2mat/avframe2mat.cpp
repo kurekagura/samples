@@ -13,18 +13,18 @@ extern "C" {
 
 #include "../libavcv/libavcv.h"
 
-using namespace std;
-
 int main(int argc, char* argv[])
 {
 	//if set nullptr, search a proper one.
 	const char* decoder_name = "h264_qsv"; // "h264_qsv";
 
-	if (argc < 2) {
-		std::cerr << "Error: The path to the .mp4 file is not specified." << std::endl;
+	if (argc < 3) {
+		std::cerr << "Error: Specify the path to movie file on 1st." << std::endl;
+		std::cerr << "Error: Specify directory(no trailing slash) to output bitmap files." << std::endl;
 		return -1;
 	}
 	const char* movie_file_path = argv[1];
+	const char* output_dir = argv[2];
 
 	AVFormatContext* avfmtctx = nullptr;
 	if (avformat_open_input(&avfmtctx, movie_file_path, nullptr, nullptr) != 0) {
@@ -157,12 +157,12 @@ int main(int argc, char* argv[])
 				std::cout << "Info: Decoded frame(" << frame_counter << ") PTS:" << frame->pts << std::endl;
 
 				auto mat = convert_avframe_to_mat(swsctx, frame, dst_pix_fmt);
-				const cv::String bmpfile = cv::format("C:\\dev\\samplevideo\\out-avframe2mat\\%03d.bmp", frame_counter);
+				const cv::String bmpfile = cv::format("%s\\%03d.bmp", output_dir, frame_counter);
 				frame_counter++;
 
 				if (!cv::imwrite(bmpfile, mat))
 				{
-					cerr << "failed to 'imwrite'" << endl;
+					std::cerr << "failed to 'imwrite'" << std::endl;
 				}
 			} while (true);
 			std::cout << std::endl;
@@ -187,12 +187,12 @@ int main(int argc, char* argv[])
 		{
 			std::cout << "Info: Decoded frame(" << frame_counter << ") PTS:" << frame->pts << std::endl;
 			auto mat = convert_avframe_to_mat(swsctx, frame, dst_pix_fmt);
-			const cv::String bmpfile = cv::format("C:\\dev\\samplevideo\\out-avframe2mat\\%03d.bmp", frame_counter);
+			const cv::String bmpfile = cv::format("%s\\%03d.bmp", output_dir, frame_counter);
 			frame_counter++;
 
 			if (!cv::imwrite(bmpfile, mat))
 			{
-				cerr << "failed to 'imwrite'" << endl;
+				std::cerr << "failed to 'imwrite'" << std::endl;
 			}
 		}
 	} while (ret == 0);

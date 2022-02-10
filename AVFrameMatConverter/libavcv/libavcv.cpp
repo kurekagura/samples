@@ -1,6 +1,6 @@
 ﻿#include "libavcv.h"
 
-AVFrame* convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelFormat dst_pix_fmt) {
+AVFrame& convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelFormat dst_pix_fmt) {
 	//src_pix_fmtはmatに依存
 	//CV_U8C3(BGR) -> AV_PIX_FMT_BGR24, or NotImplemented.
 	//Point: share databuf in srcframe and mat;
@@ -26,7 +26,7 @@ AVFrame* convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelF
 	}
 
 	av_frame_free(&srcframe);
-	return dstframe;
+	return *dstframe;
 }
 
 cv::Mat& convert_avframe_to_mat(SwsContext* swsctx, AVFrame* srcframe, AVPixelFormat dst_pix_fmt)

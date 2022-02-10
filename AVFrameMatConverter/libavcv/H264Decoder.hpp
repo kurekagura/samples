@@ -15,12 +15,13 @@ class H264Decoder
 public:
 	H264Decoder(const char* mp4_path, const char* decoder_name = nullptr);
 	virtual ~H264Decoder();
-	std::vector<cv::Mat> decode();
+	std::vector<cv::Mat> decode_to_mat();
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> decode();
+	AVPixelFormat pix_fmt();
 private:
 	AVFormatContext* avfmtctx;
 	AVStream* avstream;
 	AVCodec* avcodec;
 	AVCodecContext* avcodecctx;
-	SwsContext* swsctx;
 };
 
