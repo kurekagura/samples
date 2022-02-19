@@ -24,11 +24,11 @@ int main(int argc, char* argv[])
 
 	if (argc < 3) {
 		std::cerr << "Error: 第一引数に連番画像ファイルが格納されたディレクトリを指定して下さい。" << std::endl;
-		std::cerr << "Error: 第二引数に動画の出力先ファイルを指定して下さい(.mp4)。" << std::endl;
+		std::cerr << "Error: 第二引数に動画の出力先ディレクトリを指定して下さい(ファイル名は自動生成されます)。" << std::endl;
 		return -1;
 	}
 	const std::string basedir = argv[1];
-	const std::string outputFileName = argv[2];
+	const std::string outputDir = argv[2];
 
 	// 連番画像ファイルの一覧取得・ソート
 	std::vector<std::string> bmpVec;
@@ -53,13 +53,19 @@ int main(int argc, char* argv[])
 	SwsContext* swsctx = nullptr;
 
 	//エンコーダの指定
-	//const char* encoder_name = "libx264"; //Requre NV12
-	const char* encoder_name = "h264_qsv"; //Require NV12
-	//const char* encoder_name = "h264_nvenc";
+	//const char* encoder_name = "libx264";		//Requre NV12 or YUV420P
+	//const char* encoder_name = "h264_qsv";	//Require NV12
+	const char* encoder_name = "h264_nvenc";	//Require NV12
 
 	//エンコーダが対応している色空間への変換
 	//const AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_YUV420P; //libx264
-	const AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_NV12; //libx264, h264_qsv
+	const AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_NV12; //libx264, h264_qsv, h264_nvenc
+
+	//出力するMP4ファイルパスの文字列生成
+	std::string outputFileName = cv::format("%s\\out-mat2avframe-%s-%s.mp4",
+		outputDir.c_str(),
+		av_get_pix_fmt_name(dst_pix_fmt),
+		encoder_name);
 
 	// 色空間変換を行い、Mat→AVFrameにする。
 	// AVFrameは独自のdeletorを定義
@@ -121,7 +127,10 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	avcodecctx->pix_fmt = (AVPixelFormat)avframeVec[0]->format;
+	//未設定の時の値はエンコーダによって異なるよう．libx264(-1),h264_qsv(250),h264_nvenc(250).
+	avcodecctx->gop_size = 60;
+
+	avcodecctx->pix_fmt = dst_pix_fmt;
 	avcodecctx->width = avframeVec[0]->width;
 	avcodecctx->height = avframeVec[0]->height;
 	avcodecctx->field_order = AV_FIELD_PROGRESSIVE;
@@ -208,6 +217,10 @@ int main(int argc, char* argv[])
 	for (int idx = 0; idx < avframeVec.size(); idx++) {
 		auto& enc_frame = avframeVec[idx];
 
+		//if (idx % 30 == 0) {
+		//	enc_frame->pict_type = AVPictureType::AV_PICTURE_TYPE_I;
+		//}
+
 		//ptsは自動では設定されないよう.pkt_dtsは自動で設定されるよう．
 		//enc_frame->pts = idx * 512;
 		enc_frame->pts = av_rescale_q(idx, avcodecctx->time_base, avstream->time_base); // av_rescale_q(a,bq,cq): a*(bq/cq)
@@ -292,8 +305,10 @@ int main(int argc, char* argv[])
 
 	SwsContext* swsctx2 = nullptr;
 
+	// To print the list of I frames.
 	std::ostringstream oss;
-	oss << "I Frames => ";
+	oss << "Output file : " << outputFileName << std::endl;
+	oss << "I Frames : ";
 
 	for (auto it = decodedAVFrameVec.begin(); it != decodedAVFrameVec.end(); ++it) {
 		int idx = std::distance(decodedAVFrameVec.begin(), it);
@@ -324,6 +339,7 @@ int main(int argc, char* argv[])
 
 		if (cv::waitKey(1) == 'q') {
 			std::cout << "Info: Program aborted." << std::endl;
+			break;
 		}
 	}
 

@@ -29,6 +29,8 @@ AVFrame& convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelF
 	return *dstframe;
 }
 
+//TODO:dst_pix_fmtはBGR24のみしか対応できないのであれば削除
+//swsctxも内部で生成すべき？
 cv::Mat& convert_avframe_to_mat(SwsContext* swsctx, AVFrame* srcframe, AVPixelFormat dst_pix_fmt)
 {
 	int buffsize = av_image_get_buffer_size(dst_pix_fmt, srcframe->width, srcframe->height, 32);
@@ -58,3 +60,149 @@ cv::Mat& convert_avframe_to_mat(SwsContext* swsctx, AVFrame* srcframe, AVPixelFo
 
 	return *mat;
 }
+
+cv::Mat& convert_avframe_to_mat(AVFrame* srcframe, AVPixelFormat src_pix_fmt)
+{
+	AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_BGR24;
+
+	SwsContext* swsctx = sws_getContext
+	(
+		srcframe->width,
+		srcframe->height,
+		src_pix_fmt,
+		srcframe->width,
+		srcframe->height,
+		AVPixelFormat::AV_PIX_FMT_BGR24,
+		SWS_BICUBIC,
+		nullptr,
+		nullptr,
+		nullptr
+	);
+
+	int buffsize = av_image_get_buffer_size(dst_pix_fmt, srcframe->width, srcframe->height, 32);
+	//Who release it?
+	uint8_t* databuf = (uint8_t*)av_malloc(buffsize);
+
+	//Point: share databuf in dstframe and mat;
+	AVFrame* dstframe = av_frame_alloc();
+	//3rd: const ​​​uint8_t​ *​​‌src​
+	int reqsize = av_image_fill_arrays(dstframe->data, dstframe->linesize, databuf, dst_pix_fmt, srcframe->width, srcframe->height, 32);
+
+	//Convert coloarspace, avframe to frame(shared with Mat).
+	//If srcFormat is NV12, this fails.
+	//https://stackoverflow.com/questions/16112063/how-can-i-use-ffmpegs-swscale-to-convert-from-nv12-to-rgb32
+	int res = sws_scale(swsctx, srcframe->data, srcframe->linesize, 0, srcframe->height, dstframe->data, dstframe->linesize);
+	if (res == 0) {
+		std::cerr << "Failed to 'sws_scale'" << std::endl;
+	}
+
+	//void*, Mat will release databuf?
+	cv::Mat* mat = new cv::Mat(srcframe->height, srcframe->width, CV_8UC3, databuf, dstframe->linesize[0]);
+
+	av_frame_free(&dstframe);
+	sws_freeContext(swsctx);
+	return *mat;
+}
+
+/// <summary>
+/// avcodec_send_packetとavcodec_receive_frameを利用するルーティンを関数化
+/// </summary>
+/// <param name="avcodecctx"></param>
+/// <param name="avpacket"></param>
+/// <returns></returns>
+std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecctx, const AVPacket* avpacket) {
+	if (avcodec_send_packet(avcodecctx, avpacket) != 0)
+		throw "Failed: avcodec_send_packet";
+
+	std::vector<AVFrame*> avframeVec;
+
+	AVFrame* frame = av_frame_alloc();
+	//デコーダに１パケット渡しても（avcodec_send_packet）、必ず１枚のフレームが取得できるとは限らない（avcodec_receive_frame）。
+	//Bフレームが使われていると、数フレーム分のパケットが揃って初めて、該当する複数のデコードフレームを受け取れる。
+	do {
+		//取り出せるフレームが存在する(戻り値0)の間、繰り返す。
+		if (avcodec_receive_frame(avcodecctx, frame) != 0)
+			break;
+		else {
+			AVFrame* new_ref = av_frame_alloc();
+			av_frame_ref(new_ref, frame);
+			avframeVec.push_back(new_ref);
+		}
+	} while (true);
+
+	av_frame_free(&frame);
+	return avframeVec;
+}
+
+/// <summary>
+/// Iフレームに至る過程でデコードされた全フレームも戻す仕様．
+/// その内，ターゲットのフレームをindexで示す．Iteratorを戻した方が良い？
+/// </summary>
+/// <param name="avcodecctx"></param>
+/// <param name="avfmtctx"></param>
+/// <param name="avstream"></param>
+/// <param name="pts"></param>
+/// <returns></returns>
+std::vector<AVFrame*> ffmpeg_read_frame_send_packet_receive_frames(
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index) {
+
+	std::vector<AVFrame*> avframeVec;
+
+	AVPacket avpacket = AVPacket();
+
+	bool break_read_frame = false;
+	while (break_read_frame == false && av_read_frame(avfmtctx, &avpacket) == 0) {
+		if (avpacket.stream_index != avstream->index) {
+			av_packet_unref(&avpacket);
+			continue; //対象ビデオストリーム以外は無視
+		}
+
+		std::vector<AVFrame*> tmpVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
+
+		for (auto& frame : tmpVec) {
+			if (frame->pts < pts) {
+				avframeVec.push_back(frame);
+			}
+			else if (frame->pts == pts) {
+				avframeVec.push_back(frame);
+				*index = avframeVec.size() - 1;
+			}
+			else
+			{
+				avframeVec.push_back(frame);
+				break_read_frame = true;
+			}
+		}
+		av_packet_unref(&avpacket);
+	}
+
+	//readが終わった，もしくは終えた際の最終フラッシュ
+	std::vector<AVFrame*> residue = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
+	for (auto& frame : residue) {
+		avframeVec.push_back(frame);
+	}
+
+	return avframeVec;
+}
+
+AVFrame* frame_alloc_copy_props(AVFrame* src) {
+	AVFrame* dst = av_frame_alloc();
+
+	av_frame_copy_props(dst, src);
+
+	dst->format = src->format;
+	dst->width = src->width;
+	dst->height = src->height;
+
+	// Alloc buffer.
+	if (av_frame_get_buffer(dst, 32) != 0) {
+		throw "av_frame_get_buffer";
+	}
+
+	return dst;
+}
+
+//AVPixelFormat extract_pix_fmt() {
+//
+//	return AVPixelFormat::AV_PIX_FMT_YUV420P;
+//}

@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	// If srcFormat is NV12, fail.
 	// https://stackoverflow.com/questions/56409122/swscale-image-patch-nv12-color-conversion-invalid-border
 	// SWS_POINT | SWS_BITEXACT
-	// avcodecctx->pix_fmtはavcodec_send_packet呼出し後にNV12に設定される（ここではYUV420p）。
+	// h264_qsvでは、avcodecctx->pix_fmtはavcodec_send_packet呼出し後にNV12に設定される（この段階ではYUV420pになっている）。
 	// その為、ここでsws_getContextするのではなく、後でフレーム復元の度にsws_getCachedContextをする。
 	SwsContext* swsctx = nullptr;
 	//SwsContext* swsctx = sws_getContext
@@ -145,10 +145,9 @@ int main(int argc, char* argv[])
 
 			//デコーダに１パケット渡しても（avcodec_send_packet）、必ず１枚のフレームが取得できるとは限らない（avcodec_receive_frame）。
 			//Bフレームが使われていると、数フレーム分のパケットが揃って初めて、該当する複数のデコードフレームを受け取れる。
-			int ret = 0;
 			do {
 				//取り出せるフレームが存在する(戻り値0)の間、繰り返す。
-				ret = avcodec_receive_frame(avcodecctx, frame);
+				int ret = avcodec_receive_frame(avcodecctx, frame);
 				std::cout << "avcodec_receive_frame returned (" << ret << ")" << std::endl;
 				if (ret != 0)
 					break;
@@ -178,24 +177,24 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	int ret = 0;
 	do {
-		ret = avcodec_receive_frame(avcodecctx, frame);
+		int ret = avcodec_receive_frame(avcodecctx, frame);
 		std::cout << "avcodec_receive_frame returned (" << ret << ")" << std::endl;
-		std::cout << "frame->pict_type=" << av_get_picture_type_char(frame->pict_type) << std::endl;
-		if (ret == 0)
-		{
-			std::cout << "Info: Decoded frame(" << frame_counter << ") PTS:" << frame->pts << std::endl;
-			auto mat = convert_avframe_to_mat(swsctx, frame, dst_pix_fmt);
-			const cv::String bmpfile = cv::format("%s\\%03d.bmp", output_dir, frame_counter);
-			frame_counter++;
+		if (ret != 0)
+			break;
 
-			if (!cv::imwrite(bmpfile, mat))
-			{
-				std::cerr << "failed to 'imwrite'" << std::endl;
-			}
+		std::cout << "frame->pict_type=" << av_get_picture_type_char(frame->pict_type) << std::endl;
+		std::cout << "Info: Decoded frame(" << frame_counter << ") PTS:" << frame->pts << std::endl;
+
+		auto mat = convert_avframe_to_mat(swsctx, frame, dst_pix_fmt);
+		const cv::String bmpfile = cv::format("%s\\%03d.bmp", output_dir, frame_counter);
+		frame_counter++;
+
+		if (!cv::imwrite(bmpfile, mat))
+		{
+			std::cerr << "failed to 'imwrite'" << std::endl;
 		}
-	} while (ret == 0);
+	} while (true);
 
 	sws_freeContext(swsctx);
 	av_frame_free(&frame);
