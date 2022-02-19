@@ -23,7 +23,7 @@ AVFrame& convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelF
 
 std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecctx, const AVPacket* avpacket);
 
-std::vector<AVFrame*> ffmpeg_read_frame_send_packet_receive_frames(
+std::vector<AVFrame*> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
 	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index);
 
 AVFrame* frame_alloc_copy_props(AVFrame* src);

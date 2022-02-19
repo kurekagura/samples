@@ -136,6 +136,7 @@ std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecc
 
 /// <summary>
 /// Iフレームに至る過程でデコードされた全フレームも戻す仕様．
+/// 内部で最初にav_seek_frameしている。
 /// その内，ターゲットのフレームをindexで示す．Iteratorを戻した方が良い？
 /// </summary>
 /// <param name="avcodecctx"></param>
@@ -143,8 +144,13 @@ std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecc
 /// <param name="avstream"></param>
 /// <param name="pts"></param>
 /// <returns></returns>
-std::vector<AVFrame*> ffmpeg_read_frame_send_packet_receive_frames(
+std::vector<AVFrame*> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
 	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index) {
+
+	if (av_seek_frame(avfmtctx, avstream->index, pts, AVSEEK_FLAG_BACKWARD) < 0)
+		throw "Failed: av_seek_frame";
+
+	avcodec_flush_buffers(avcodecctx); //av_seek_frameの直後，バッファをフラッシュ．
 
 	std::vector<AVFrame*> avframeVec;
 
@@ -176,11 +182,21 @@ std::vector<AVFrame*> ffmpeg_read_frame_send_packet_receive_frames(
 		av_packet_unref(&avpacket);
 	}
 
-	//readが終わった，もしくは終えた際の最終フラッシュ
+	//readが終わった，もしくは終えた後のフラッシュ
 	std::vector<AVFrame*> residue = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
-	for (auto& frame : residue) {
+	for (int i = 0; i < residue.size(); i++) {
+		auto frame = residue[i];
 		avframeVec.push_back(frame);
+		if (frame->pts == pts)
+			*index = avframeVec.size() - 1;
 	}
+
+	/*for (int i = 0; i < avframeVec.size(); i++) {
+		if (avframeVec[i]->pts == pts) {
+			*index = i;
+			break;
+		}
+	}*/
 
 	return avframeVec;
 }

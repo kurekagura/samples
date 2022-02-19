@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mat2avframe", "mat2avframe\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libavcv", "libavcv\libavcv.vcxproj", "{9EBD78D7-602E-45AB-AAB9-72DD38D61FBA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "av_seek_frame", "av_seek_frame\av_seek_frame.vcxproj", "{B8C890BE-880C-4F70-A861-81D1C79F0E8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -27,6 +29,10 @@ Global
 		{9EBD78D7-602E-45AB-AAB9-72DD38D61FBA}.Debug|x64.Build.0 = Debug|x64
 		{9EBD78D7-602E-45AB-AAB9-72DD38D61FBA}.Release|x64.ActiveCfg = Release|x64
 		{9EBD78D7-602E-45AB-AAB9-72DD38D61FBA}.Release|x64.Build.0 = Release|x64
+		{B8C890BE-880C-4F70-A861-81D1C79F0E8E}.Debug|x64.ActiveCfg = Debug|x64
+		{B8C890BE-880C-4F70-A861-81D1C79F0E8E}.Debug|x64.Build.0 = Debug|x64
+		{B8C890BE-880C-4F70-A861-81D1C79F0E8E}.Release|x64.ActiveCfg = Release|x64
+		{B8C890BE-880C-4F70-A861-81D1C79F0E8E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
