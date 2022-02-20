@@ -1,4 +1,5 @@
-﻿#include "libavcv.h"
+﻿#include <memory>
+#include "libavcv.h"
 
 AVFrame& convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelFormat dst_pix_fmt) {
 	//src_pix_fmtはmatに依存
@@ -110,11 +111,14 @@ cv::Mat& convert_avframe_to_mat(AVFrame* srcframe, AVPixelFormat src_pix_fmt)
 /// <param name="avcodecctx"></param>
 /// <param name="avpacket"></param>
 /// <returns></returns>
-std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecctx, const AVPacket* avpacket) {
+std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_send_packet_receive_frames(
+	AVCodecContext* avcodecctx, const AVPacket* avpacket)
+{
+
 	if (avcodec_send_packet(avcodecctx, avpacket) != 0)
 		throw "Failed: avcodec_send_packet";
 
-	std::vector<AVFrame*> avframeVec;
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
 
 	AVFrame* frame = av_frame_alloc();
 	//デコーダに１パケット渡しても（avcodec_send_packet）、必ず１枚のフレームが取得できるとは限らない（avcodec_receive_frame）。
@@ -126,7 +130,7 @@ std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecc
 		else {
 			AVFrame* new_ref = av_frame_alloc();
 			av_frame_ref(new_ref, frame);
-			avframeVec.push_back(new_ref);
+			avframeVec.push_back(std::unique_ptr<AVFrame, deleter_for_AVFrame>(new_ref));
 		}
 	} while (true);
 
@@ -144,7 +148,7 @@ std::vector<AVFrame*> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecc
 /// <param name="avstream"></param>
 /// <param name="pts"></param>
 /// <returns></returns>
-std::vector<AVFrame*> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
+std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
 	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index) {
 
 	if (av_seek_frame(avfmtctx, avstream->index, pts, AVSEEK_FLAG_BACKWARD) < 0)
@@ -152,7 +156,7 @@ std::vector<AVFrame*> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
 
 	avcodec_flush_buffers(avcodecctx); //av_seek_frameの直後，バッファをフラッシュ．
 
-	std::vector<AVFrame*> avframeVec;
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
 
 	AVPacket avpacket = AVPacket();
 
@@ -163,19 +167,20 @@ std::vector<AVFrame*> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
 			continue; //対象ビデオストリーム以外は無視
 		}
 
-		std::vector<AVFrame*> tmpVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
+		auto tmpVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
 
 		for (auto& frame : tmpVec) {
+
 			if (frame->pts < pts) {
-				avframeVec.push_back(frame);
+				avframeVec.push_back(std::move(frame));
 			}
 			else if (frame->pts == pts) {
-				avframeVec.push_back(frame);
+				avframeVec.push_back(std::move(frame));
 				*index = avframeVec.size() - 1;
 			}
 			else
 			{
-				avframeVec.push_back(frame);
+				avframeVec.push_back(std::move(frame));
 				break_read_frame = true;
 			}
 		}
@@ -183,20 +188,13 @@ std::vector<AVFrame*> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
 	}
 
 	//readが終わった，もしくは終えた後のフラッシュ
-	std::vector<AVFrame*> residue = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
+	auto residue = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
 	for (int i = 0; i < residue.size(); i++) {
-		auto frame = residue[i];
-		avframeVec.push_back(frame);
+		auto& frame = residue[i];
 		if (frame->pts == pts)
 			*index = avframeVec.size() - 1;
+		avframeVec.push_back(std::move(frame));
 	}
-
-	/*for (int i = 0; i < avframeVec.size(); i++) {
-		if (avframeVec[i]->pts == pts) {
-			*index = i;
-			break;
-		}
-	}*/
 
 	return avframeVec;
 }

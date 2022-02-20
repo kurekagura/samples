@@ -1,4 +1,5 @@
 ﻿#pragma warning (disable:26812)
+#include <memory>
 #include <iostream>
 
 extern "C" {
@@ -92,7 +93,7 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 			pkt_counter, avpacket.dts, avpacket.pts, avpacket.dts == avpacket.pts ? "" : "(!=)");
 		cout << logstr << endl;
 
-		std::vector<AVFrame*> avframeVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
+		auto avframeVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
 
 		for (auto& frame : avframeVec) {
 			logstr = cv::format("Info: Frame=%6d pts=%6d dts=%6d pict_type=%c pts %s dts",
@@ -102,7 +103,7 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 			cout << logstr << endl;
 			frame_counter++;
 
-			auto mat = convert_avframe_to_mat(frame, avcodecctx->pix_fmt);
+			auto mat = convert_avframe_to_mat(frame.get(), avcodecctx->pix_fmt);
 			cv::imshow("Validating", mat);
 			cv::waitKey(1);
 		}
@@ -112,7 +113,7 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 
 	// nullptrを渡して、デコーダをフラッシュする。
 	cout << "Flush encoder." << endl;
-	std::vector<AVFrame*> avframeVec = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
+	auto avframeVec = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
 	for (auto& frame : avframeVec) {
 		logstr = cv::format("Info: Frame=%6d pts=%6d dts=%6d pict_type=%c pts %s dts",
 			frame_counter, frame->pts, frame->pkt_dts, av_get_picture_type_char(frame->pict_type),
@@ -121,7 +122,7 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 		cout << logstr << endl;
 		frame_counter++;
 
-		auto mat = convert_avframe_to_mat(frame, avcodecctx->pix_fmt);
+		auto mat = convert_avframe_to_mat(frame.get(), avcodecctx->pix_fmt);
 		cv::imshow("Validating", mat);
 		cv::waitKey(1);
 	}
@@ -135,14 +136,14 @@ void test_read_specifidframe(AVCodecContext* avcodecctx, AVFormatContext* avfmtc
 	for (int64_t pts : pts_list) {
 
 		int target_idx;
-		std::vector<AVFrame*> avframeVec = ffmpeg_seek_frame_read_frame_send_packet_receive_frames(avcodecctx, avfmtctx, avstream, pts, &target_idx);
+		auto avframeVec = ffmpeg_seek_frame_read_frame_send_packet_receive_frames(avcodecctx, avfmtctx, avstream, pts, &target_idx);
 
 		auto& frame = avframeVec[target_idx];
 		logstr = cv::format("Info: pts=%6d dts=%6d pict_type=%c %d/%d", 
 			frame->pts, frame->pkt_dts, av_get_picture_type_char(frame->pict_type), target_idx, avframeVec.size());
 		cout << logstr << endl;
 
-		auto mat = convert_avframe_to_mat(frame, avcodecctx->pix_fmt);
+		auto mat = convert_avframe_to_mat(frame.get(), avcodecctx->pix_fmt);
 		cv::imshow("Validating", mat);
 		cv::waitKey(1);
 	}
