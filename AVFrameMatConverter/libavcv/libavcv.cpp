@@ -106,6 +106,19 @@ cv::Mat& convert_avframe_to_mat(AVFrame* srcframe, AVPixelFormat src_pix_fmt)
 }
 
 /// <summary>
+/// AVStreamのr_frame_rateとtime_baseを用いて，フレームインデックスからPTSを算出する．
+/// </summary>
+/// <param name="avstream"></param>
+/// <param name="frame_index"></param>
+/// <returns></returns>
+int64_t ffmpeg_frameindex_to_pts(const AVStream* avstream, int64_t frame_index)
+{
+	AVRational time_base_basedon_r_frame_rate = av_inv_q(avstream->r_frame_rate);
+	int64_t pts = av_rescale_q(frame_index, time_base_basedon_r_frame_rate, avstream->time_base);
+	return pts;
+}
+
+/// <summary>
 /// avcodec_send_packetとavcodec_receive_frameを利用するルーティンを関数化
 /// </summary>
 /// <param name="avcodecctx"></param>
@@ -139,6 +152,66 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_send_packet_re
 }
 
 /// <summary>
+/// 内部実装はffmpeg_seek_read_send_receive_frames_by_ptsと類似．
+/// </summary>
+/// <param name="avcodecctx"></param>
+/// <param name="avfmtctx"></param>
+/// <param name="avstream"></param>
+/// <param name="frame_index"></param>
+/// <param name="index"></param>
+/// <returns></returns>
+std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send_receive_frames_by_frameindex(
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t frame_index, int* index)
+{
+	*index = -1;
+	// AVSEEK_FLAG_FRAMEのみは，次のIフレームになるので注意．
+	if (av_seek_frame(avfmtctx, avstream->index, frame_index, AVSEEK_FLAG_FRAME | AVSEEK_FLAG_BACKWARD) < 0)
+		throw "Failed: av_seek_frame";
+
+	avcodec_flush_buffers(avcodecctx); //av_seek_frameの直後，バッファをフラッシュ．
+
+	//指定されたフレームIDXのPTS．但し，存在するとは限らない？
+	//coded_picture_numberやdisplay_picture_numberが使えないので導入．
+	//フレームIDXで指定しているのに，AVFrameなど，どこにも記録されていないので回避策としてPTSと比較する．
+	int64_t expected_pts = ffmpeg_frameindex_to_pts(avstream, frame_index);
+
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
+
+	AVPacket avpacket = AVPacket();
+
+	bool break_read_frame = false;
+	while (break_read_frame == false && av_read_frame(avfmtctx, &avpacket) == 0) {
+		if (avpacket.stream_index != avstream->index) {
+			av_packet_unref(&avpacket);
+			continue; //対象ビデオストリーム以外は無視
+		}
+
+		auto tmpVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
+
+		for (auto& frame : tmpVec) {
+			if (frame->pts == expected_pts)
+				*index = avframeVec.size();	//目的のフレーム
+			else if (frame->pts > expected_pts)
+				break_read_frame = true;		//PTSが過ぎたので停止．
+			
+			avframeVec.push_back(std::move(frame)); //moveはここ
+		}
+		av_packet_unref(&avpacket);
+	}
+
+	//readが終わった，もしくは終えた後のフラッシュ
+	auto residue = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
+	for (int i = 0; i < residue.size(); i++) {
+		auto& frame = residue[i];
+		if (frame->pts == expected_pts)
+			*index = avframeVec.size();		//目的のフレーム
+		avframeVec.push_back(std::move(frame));
+	}
+
+	return avframeVec;
+}
+
+/// <summary>
 /// Iフレームに至る過程でデコードされた全フレームも戻す仕様．
 /// 内部で最初にav_seek_frameしている。
 /// その内，ターゲットのフレームをindexで示す．Iteratorを戻した方が良い？
@@ -147,10 +220,13 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_send_packet_re
 /// <param name="avfmtctx"></param>
 /// <param name="avstream"></param>
 /// <param name="pts"></param>
+/// <param name="index">呼び出し直後，-1に初期化されまる．</param>
 /// <returns></returns>
-std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_frame_read_frame_send_packet_receive_frames(
-	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index) {
-
+std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send_receive_frames_by_pts(
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index)
+{
+	*index = -1;
+	// Seek by PTS
 	if (av_seek_frame(avfmtctx, avstream->index, pts, AVSEEK_FLAG_BACKWARD) < 0)
 		throw "Failed: av_seek_frame";
 
@@ -170,19 +246,12 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_frame_rea
 		auto tmpVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
 
 		for (auto& frame : tmpVec) {
-
-			if (frame->pts < pts) {
-				avframeVec.push_back(std::move(frame));
-			}
-			else if (frame->pts == pts) {
-				avframeVec.push_back(std::move(frame));
-				*index = avframeVec.size() - 1;
-			}
-			else
-			{
-				avframeVec.push_back(std::move(frame));
-				break_read_frame = true;
-			}
+			if (frame->pts == pts)
+				*index = avframeVec.size();	//目的のフレーム
+			else if (frame->pts > pts)
+				break_read_frame = true;		//PTSが過ぎたので停止．
+		
+			avframeVec.push_back(std::move(frame));	//moveはここ
 		}
 		av_packet_unref(&avpacket);
 	}
@@ -192,7 +261,7 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_frame_rea
 	for (int i = 0; i < residue.size(); i++) {
 		auto& frame = residue[i];
 		if (frame->pts == pts)
-			*index = avframeVec.size() - 1;
+			*index = avframeVec.size();
 		avframeVec.push_back(std::move(frame));
 	}
 

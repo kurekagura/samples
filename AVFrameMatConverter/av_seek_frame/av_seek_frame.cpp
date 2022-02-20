@@ -64,6 +64,7 @@ AVRational ffmpeg_load_time_base(AVCodecContext* avcodecctx, AVFormatContext* av
 	//先頭に戻しておく
 	//if (av_seek_frame(avfmtctx, avstream->index, 0, AVSEEK_FLAG_FRAME) < 0)
 	//	throw "Failed: av_seek_frame";
+	// AVSEEK_FLAG_FRAME|AVSEEK_FLAG_BACKWARD
 	if (av_seek_frame(avfmtctx, avstream->index, 0, AVSEEK_FLAG_FRAME) < 0)
 		throw "Failed: av_seek_frame";
 	avcodec_flush_buffers(avcodecctx); //Seek後にフラッシュ
@@ -96,10 +97,10 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 		auto avframeVec = ffmpeg_send_packet_receive_frames(avcodecctx, &avpacket);
 
 		for (auto& frame : avframeVec) {
-			logstr = cv::format("Info: Frame=%6d pts=%6d dts=%6d pict_type=%c pts %s dts",
+			logstr = cv::format("Info: Frame=%6d pts=%6d dts=%6d pict_type=%c (pts %s dts) CodedPicNo=%4d ",
 				frame_counter, frame->pts, frame->pkt_dts, av_get_picture_type_char(frame->pict_type),
-				frame->pts == frame->pkt_dts ? "==" : "!="
-			);
+				frame->pts == frame->pkt_dts ? "==" : "!=",
+				frame->coded_picture_number);
 			cout << logstr << endl;
 			frame_counter++;
 
@@ -115,10 +116,10 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 	cout << "Flush encoder." << endl;
 	auto avframeVec = ffmpeg_send_packet_receive_frames(avcodecctx, nullptr);
 	for (auto& frame : avframeVec) {
-		logstr = cv::format("Info: Frame=%6d pts=%6d dts=%6d pict_type=%c pts %s dts",
+		logstr = cv::format("Info: Frame=%6d pts=%6d dts=%6d pict_type=%c (pts %s dts) CodedPicNo=%4d ",
 			frame_counter, frame->pts, frame->pkt_dts, av_get_picture_type_char(frame->pict_type),
-			frame->pts == frame->pkt_dts ? "==" : "!="
-		);
+			frame->pts == frame->pkt_dts ? "==" : "!=",
+			frame->coded_picture_number);
 		cout << logstr << endl;
 		frame_counter++;
 
@@ -128,7 +129,30 @@ void test_read_allframes(AVCodecContext* avcodecctx, const AVStream* avstream, A
 	}
 }
 
-void test_read_specifidframe(AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream,
+void test_read_specifidframe_by_frameindex(AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream,
+	int64_t frame_count)
+{
+	cv::String logstr;
+
+	//for (int64_t fidx = 0; fidx < frame_count; fidx++) {
+	for (int64_t fidx = frame_count - 1; fidx >= 0; fidx--) {
+		int target_idx;
+		auto avframeVec = ffmpeg_seek_read_send_receive_frames_by_frameindex(avcodecctx, avfmtctx, avstream, fidx, &target_idx);
+		if (target_idx == -1)
+			throw cv::format("Failed: There is NOT this frame");
+
+		auto& frame = avframeVec[target_idx];
+		logstr = cv::format("Info: pts=%6d dts=%6d pict_type=%c %d/%d",
+			frame->pts, frame->pkt_dts, av_get_picture_type_char(frame->pict_type), target_idx, avframeVec.size());
+		cout << logstr << endl;
+
+		auto mat = convert_avframe_to_mat(frame.get(), avcodecctx->pix_fmt);
+		cv::imshow("Validating", mat);
+		cv::waitKey(1);
+	}
+}
+
+void test_read_specifidframe_by_pts(AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream,
 	const std::vector<int64_t>& pts_list)
 {
 	cv::String logstr;
@@ -136,10 +160,12 @@ void test_read_specifidframe(AVCodecContext* avcodecctx, AVFormatContext* avfmtc
 	for (int64_t pts : pts_list) {
 
 		int target_idx;
-		auto avframeVec = ffmpeg_seek_frame_read_frame_send_packet_receive_frames(avcodecctx, avfmtctx, avstream, pts, &target_idx);
+		auto avframeVec = ffmpeg_seek_read_send_receive_frames_by_pts(avcodecctx, avfmtctx, avstream, pts, &target_idx);
+		if (target_idx == -1)
+			throw cv::format("Failed: Thre is NOT this PTS");
 
 		auto& frame = avframeVec[target_idx];
-		logstr = cv::format("Info: pts=%6d dts=%6d pict_type=%c %d/%d", 
+		logstr = cv::format("Info: pts=%6d dts=%6d pict_type=%c %d/%d",
 			frame->pts, frame->pkt_dts, av_get_picture_type_char(frame->pict_type), target_idx, avframeVec.size());
 		cout << logstr << endl;
 
@@ -240,17 +266,18 @@ int main(int argc, char* argv[])
 	AVRational time_base_avcodecctx = ffmpeg_load_time_base(avcodecctx, avfmtctx, avstream);
 	auto fps_avcodecctx = avcodecctx->framerate; //[注]アクセスタイミングによって不正
 
-	//テスト：最初から最後までシーケンシャルにデコードする．
+	/* テスト：最初から最後までシーケンシャルにデコードする．*/
 	//test_read_allframes(avcodecctx, avstream, avfmtctx);
 
-	AVRational time_base_from_fps_of_avstream = av_inv_q(r_frame_rate_of_avstream);
+	/* テスト：任意のフレームへフレームインデクスでシークする．*/
+	test_read_specifidframe_by_frameindex(avcodecctx, avfmtctx, avstream, avstream->nb_frames);
+
+	/* テスト：任意のフレームへPTSでシークする．*/
 	std::vector<int64_t> pts_list;
 	for (int64_t nb_frame = 0; nb_frame < avstream->nb_frames; nb_frame++) {
-		pts_list.push_back(av_rescale_q(nb_frame, time_base_from_fps_of_avstream, time_base_of_avstream));
+		pts_list.push_back(ffmpeg_frameindex_to_pts(avstream, nb_frame));
 	}
-
-	//テスト：任意フレームへのシークする．	
-	test_read_specifidframe(avcodecctx, avfmtctx, avstream, pts_list);
+	test_read_specifidframe_by_pts(avcodecctx, avfmtctx, avstream, pts_list);
 
 	avcodec_free_context(&avcodecctx);
 	avformat_close_input(&avfmtctx);
