@@ -28,9 +28,9 @@ int64_t ffmpeg_frameindex_to_pts(const AVStream* avstream, int64_t frame_index);
 std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_send_packet_receive_frames(AVCodecContext* avcodecctx, const AVPacket* avpacket);
 
 std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send_receive_frames_by_frameindex(
-	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t frame_index, int* index);
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t frame_index, int64_t* index);
 
 std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send_receive_frames_by_pts(
-	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index);
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int64_t* index);
 
 AVFrame* frame_alloc_copy_props(AVFrame* src);

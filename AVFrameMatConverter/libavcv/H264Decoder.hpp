@@ -8,7 +8,10 @@ extern "C" {
 }
 
 #include <vector>
+#include <memory>
 #include <opencv2/opencv.hpp>
+
+#include "libavcv.h"
 
 class H264Decoder
 {
@@ -18,6 +21,9 @@ public:
 	std::vector<cv::Mat> decode_to_mat();
 	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> decode();
 	AVPixelFormat pix_fmt();
+	int64_t nb_frames();
+	std::unique_ptr<AVFrame,deleter_for_AVFrame> seek_frame(int64_t frame_index);
+	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> seek_frame(int64_t frame_index, int64_t* vector_index);
 private:
 	AVFormatContext* avfmtctx;
 	AVStream* avstream;

@@ -82,6 +82,31 @@ AVPixelFormat H264Decoder::pix_fmt() {
 	return avcodecctx->pix_fmt;
 }
 
+int64_t H264Decoder::nb_frames() {
+	return avstream->nb_frames;
+}
+
+/// <summary>
+/// Seekの過程でデコードされたフレームも戻す．
+/// 指定フレームは，戻り値（vector）のインデックスvector_indexに格納されている．
+/// </summary>
+/// <param name="frame_index"></param>
+/// <param name="vector_index"></param>
+/// <returns></returns>
+std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> H264Decoder::seek_frame(int64_t frame_index, int64_t* vector_index) {
+	return ffmpeg_seek_read_send_receive_frames_by_frameindex(avcodecctx, avfmtctx, avstream, frame_index, vector_index);
+}
+
+std::unique_ptr<AVFrame, deleter_for_AVFrame> H264Decoder::seek_frame(int64_t frame_index) {
+	int64_t target_idx;
+	auto avframeVec = ffmpeg_seek_read_send_receive_frames_by_frameindex(avcodecctx, avfmtctx, avstream, frame_index, &target_idx);
+	int64_t test = 1;
+	if (target_idx != -1)
+		return std::move(avframeVec[target_idx]);
+	else
+		return nullptr;
+}
+
 std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> H264Decoder::decode() {
 	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
 

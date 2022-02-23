@@ -57,15 +57,20 @@ int main(int argc, char* argv[])
 	//const char* encoder_name = "h264_qsv";	//Require NV12
 	const char* encoder_name = "h264_nvenc";	//Require NV12
 
-	//エンコーダが対応している色空間への変換
-	//const AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_YUV420P; //libx264
-	const AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_NV12; //libx264, h264_qsv, h264_nvenc
+	//Mat（BGRA）からエンコーダが対応している色空間への変換
+	// libx264 -> AV_PIX_FMT_YUV420P
+	// libx264, h264_qsv, h264_nvenc -> AV_PIX_FMT_NV12
+	const AVPixelFormat dst_pix_fmt = AVPixelFormat::AV_PIX_FMT_NV12;
+
+	//未設定の時の値はエンコーダによって異なるよう．libx264(-1),h264_qsv(250),h264_nvenc(250).
+	//TODO: h264_nvencだと奇妙な数列になる(0,9,18,...)．fpsも奇妙．
+	const int gop = 30;
 
 	//出力するMP4ファイルパスの文字列生成
-	std::string outputFileName = cv::format("%s\\out-mat2avframe-%s-%s.mp4",
+	std::string outputFileName = cv::format("%s\\out-mat2avframe-%s-%s-gop%d.mp4",
 		outputDir.c_str(),
 		av_get_pix_fmt_name(dst_pix_fmt),
-		encoder_name);
+		encoder_name, gop);
 
 	// 色空間変換を行い、Mat→AVFrameにする。
 	// AVFrameは独自のdeletorを定義
@@ -127,8 +132,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	//未設定の時の値はエンコーダによって異なるよう．libx264(-1),h264_qsv(250),h264_nvenc(250).
-	avcodecctx->gop_size = 60;
+	avcodecctx->gop_size = gop;
 
 	avcodecctx->pix_fmt = dst_pix_fmt;
 	avcodecctx->width = avframeVec[0]->width;
@@ -297,7 +301,7 @@ int main(int argc, char* argv[])
 	avio_closep(&avioctx);
 
 	// エンコード出力ファイルの検証・再生
-	// エンコーダ: "h264" or "h264_qsv" or "h264_cuvid"
+	// 利用可能なデコーダ: "h264" or "h264_qsv" or "h264_cuvid"
 	auto mydecoder = std::make_unique<H264Decoder>(outputFileName.c_str(), "h264");
 	AVPixelFormat src_pix_fmt = mydecoder->pix_fmt(); //デコーダによって値が異なる.YUV420PやNV12．
 	auto decodedAVFrameVec = mydecoder->decode();

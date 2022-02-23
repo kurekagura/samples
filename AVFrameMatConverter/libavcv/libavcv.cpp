@@ -161,19 +161,24 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_send_packet_re
 /// <param name="index"></param>
 /// <returns></returns>
 std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send_receive_frames_by_frameindex(
-	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t frame_index, int* index)
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t frame_index, int64_t* index)
 {
 	*index = -1;
-	// AVSEEK_FLAG_FRAMEのみは，次のIフレームになるので注意．
-	if (av_seek_frame(avfmtctx, avstream->index, frame_index, AVSEEK_FLAG_FRAME | AVSEEK_FLAG_BACKWARD) < 0)
-		throw "Failed: av_seek_frame";
-
-	avcodec_flush_buffers(avcodecctx); //av_seek_frameの直後，バッファをフラッシュ．
 
 	//指定されたフレームIDXのPTS．但し，存在するとは限らない？
 	//coded_picture_numberやdisplay_picture_numberが使えないので導入．
 	//フレームIDXで指定しているのに，AVFrameなど，どこにも記録されていないので回避策としてPTSと比較する．
 	int64_t expected_pts = ffmpeg_frameindex_to_pts(avstream, frame_index);
+
+	return ffmpeg_seek_read_send_receive_frames_by_pts(avcodecctx, avfmtctx, avstream, expected_pts, index);
+	
+	//以下コードでは，GOPを越えてデコード取得してしまう問題がある．
+	/*
+	// AVSEEK_FLAG_FRAMEのみは，次のIフレームになるので注意．
+	if (av_seek_frame(avfmtctx, avstream->index, frame_index, AVSEEK_FLAG_FRAME | AVSEEK_FLAG_BACKWARD) < 0)
+		throw "Failed: av_seek_frame";
+
+	avcodec_flush_buffers(avcodecctx); //av_seek_frameの直後，バッファをフラッシュ．
 
 	std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> avframeVec;
 
@@ -193,7 +198,7 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send
 				*index = avframeVec.size();	//目的のフレーム
 			else if (frame->pts > expected_pts)
 				break_read_frame = true;		//PTSが過ぎたので停止．
-			
+
 			avframeVec.push_back(std::move(frame)); //moveはここ
 		}
 		av_packet_unref(&avpacket);
@@ -209,6 +214,7 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send
 	}
 
 	return avframeVec;
+	*/
 }
 
 /// <summary>
@@ -223,7 +229,7 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send
 /// <param name="index">呼び出し直後，-1に初期化されまる．</param>
 /// <returns></returns>
 std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send_receive_frames_by_pts(
-	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int* index)
+	AVCodecContext* avcodecctx, AVFormatContext* avfmtctx, const AVStream* avstream, int64_t pts, int64_t* index)
 {
 	*index = -1;
 	// Seek by PTS
@@ -250,7 +256,7 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send
 				*index = avframeVec.size();	//目的のフレーム
 			else if (frame->pts > pts)
 				break_read_frame = true;		//PTSが過ぎたので停止．
-		
+
 			avframeVec.push_back(std::move(frame));	//moveはここ
 		}
 		av_packet_unref(&avpacket);
