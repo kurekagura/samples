@@ -30,6 +30,50 @@ AVFrame& convert_mat_to_avframe(SwsContext* swsctx, const cv::Mat& mat, AVPixelF
 	return *dstframe;
 }
 
+AVFrame& convert_mat_to_avframe(const cv::Mat& mat, AVPixelFormat dst_pix_fmt) {
+
+	SwsContext *swsctx = sws_getContext
+	(
+		mat.cols,
+		mat.rows,
+		AVPixelFormat::AV_PIX_FMT_BGR24,
+		mat.cols,
+		mat.rows,
+		dst_pix_fmt,
+		SWS_BICUBIC,
+		nullptr,
+		nullptr,
+		nullptr
+	);
+	//src_pix_fmtはmatに依存
+	//CV_U8C3(BGR) -> AV_PIX_FMT_BGR24, or NotImplemented.
+	//Point: share databuf in srcframe and mat;
+	AVFrame* srcframe = av_frame_alloc();
+	int reqsize_src = av_image_fill_arrays(srcframe->data, srcframe->linesize, (uint8_t*)mat.data, AVPixelFormat::AV_PIX_FMT_BGR24, mat.cols, mat.rows, 32);
+
+	//shared with mat.
+	int buffsize = av_image_get_buffer_size(dst_pix_fmt, mat.cols, mat.rows, 32);
+	uint8_t* databuf = (uint8_t*)av_malloc(buffsize);
+
+	AVFrame* dstframe = av_frame_alloc();
+	int reqsize_dst = av_image_fill_arrays(dstframe->data, dstframe->linesize, databuf, dst_pix_fmt, mat.cols, mat.rows, 32);
+
+	//Convert coloarspace, avframe(shared with Mat) to avframe.
+	int res = sws_scale(swsctx, srcframe->data, srcframe->linesize, 0, mat.rows, dstframe->data, dstframe->linesize);
+	if (res == 0) {
+		std::cerr << "Failed to 'sws_scale'" << std::endl;
+	}
+	else {
+		dstframe->width = mat.cols;
+		dstframe->height = mat.rows;
+		dstframe->format = dst_pix_fmt;
+	}
+
+	av_frame_free(&srcframe);
+	sws_freeContext(swsctx);
+	return *dstframe;
+}
+
 //TODO:dst_pix_fmtはBGR24のみしか対応できないのであれば削除
 //swsctxも内部で生成すべき？
 cv::Mat& convert_avframe_to_mat(SwsContext* swsctx, AVFrame* srcframe, AVPixelFormat dst_pix_fmt)
@@ -105,6 +149,10 @@ cv::Mat& convert_avframe_to_mat(AVFrame* srcframe, AVPixelFormat src_pix_fmt)
 	return *mat;
 }
 
+cv::Mat& convert_avframe_to_mat(AVFrame* srcframe) {
+	AVPixelFormat src_pix_fmt = (AVPixelFormat)srcframe->format;
+	return convert_avframe_to_mat(srcframe, src_pix_fmt);
+}
 /// <summary>
 /// AVStreamのr_frame_rateとtime_baseを用いて，フレームインデックスからPTSを算出する．
 /// </summary>
@@ -171,7 +219,7 @@ std::vector<std::unique_ptr<AVFrame, deleter_for_AVFrame>> ffmpeg_seek_read_send
 	int64_t expected_pts = ffmpeg_frameindex_to_pts(avstream, frame_index);
 
 	return ffmpeg_seek_read_send_receive_frames_by_pts(avcodecctx, avfmtctx, avstream, expected_pts, index);
-	
+
 	//以下コードでは，GOPを越えてデコード取得してしまう問題がある．
 	/*
 	// AVSEEK_FLAG_FRAMEのみは，次のIフレームになるので注意．
