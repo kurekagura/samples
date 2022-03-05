@@ -13,7 +13,7 @@ public:
     explicit QueueChannel(std::size_t max_length = default_max_length)
       : max_length_(max_length), is_closed_(false) {}
 
-    void push(T* val)
+    void push(const T* val)
     {
         std::unique_lock<std::mutex> lock(mtx_);
         cond_.wait(lock, [this]() {return buff_.size() < max_length_;});
@@ -22,7 +22,7 @@ public:
         cond_.notify_one();
     }
 
-    T* pop()
+    const T* pop()
     {
         std::unique_lock<std::mutex> lock(mtx_);
         //spurious wakeupが発生した場合でも、ラムダ式がfalseを戻せばまたwaitする。
@@ -33,7 +33,7 @@ public:
             return nullptr;
         }
 
-        T* val = buff_.front();
+        const T* val = buff_.front();
         buff_.pop();
         cond_.notify_one();
         return val;
@@ -48,7 +48,7 @@ public:
 private:
     static constexpr std::size_t default_max_length = 10;
     std::size_t max_length_;
-    std::queue<T*> buff_;
+    std::queue<const T*> buff_;
     std::mutex mtx_;
     std::condition_variable cond_;
     bool is_closed_;

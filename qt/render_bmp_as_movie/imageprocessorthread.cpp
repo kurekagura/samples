@@ -34,9 +34,9 @@ void ImageProcessorThread::func_thread()
         if(thread_stop_requested_)
             break;
 
-        cv::Mat* mat = qch_->pop();
+        const cv::Mat* mat = qch_->pop();
         if(mat != nullptr){
-            emit Signal_RenderImage(*mat);
+            emit Signal_RenderImage(const_cast<cv::Mat&>(*mat));
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
