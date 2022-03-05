@@ -17,6 +17,7 @@ void ImageProcessorThread::start()
 
 void ImageProcessorThread::stop(){
     thread_stop_requested_ = true;
+    this->qch_->close();
 }
 
 void ImageProcessorThread::waitForFinished(){
@@ -33,9 +34,10 @@ void ImageProcessorThread::func_thread()
         if(thread_stop_requested_)
             break;
 
-        auto mat = qch_->pop();
-        emit Signal_RenderImage(mat);
-
+        cv::Mat* mat = qch_->pop();
+        if(mat != nullptr){
+            emit Signal_RenderImage(*mat);
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
 }

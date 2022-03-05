@@ -55,7 +55,7 @@ void ImageCaptureThread::func_thread()
             break;
 
         cv::Mat mat = pseudo_device_[i].clone();
-        qch_->put(mat);
+        qch_->push(&mat);
 
         i++;
         if(i > max)
