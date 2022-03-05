@@ -18,7 +18,7 @@ public:
 
 private:
     Ui::MyWindow2 *ui;
-    CaptureStdThread capThread_;
+    CaptureStdThread *capStdThr_;
 
 protected slots:
     void closeEvent(QCloseEvent *);

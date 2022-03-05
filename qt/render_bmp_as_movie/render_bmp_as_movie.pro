@@ -2,7 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -18,19 +18,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     captureqthread.cpp \
     capturestdthread.cpp \
+    imagecapturethread.cpp \
+    imageprocessorthread.cpp \
     main.cpp \
     mywindow1.cpp \
-    mywindow2.cpp
+    mywindow2.cpp \
+    mywindow3.cpp
 
 HEADERS += \
     captureqthread.h \
     capturestdthread.h \
+    imagecapturethread.h \
+    imageprocessorthread.h \
     mywindow1.h \
-    mywindow2.h
+    mywindow2.h \
+    mywindow3.h \
+    queuechannel.h
 
 FORMS += \
     mywindow1.ui \
-    mywindow2.ui
+    mywindow2.ui \
+    mywindow3.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

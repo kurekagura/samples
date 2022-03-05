@@ -7,24 +7,27 @@ MyWindow2::MyWindow2(QWidget *parent) :
     ui(new Ui::MyWindow2)
 {
     ui->setupUi(this);
-    connect(&capThread_, SIGNAL(Signal_RenderImage(cv::Mat&)), this, SLOT(Slot_RenderImage(cv::Mat&)), Qt::QueuedConnection);
 
-    capThread_.start();
+    capStdThr_ = new CaptureStdThread(this);
+    connect(capStdThr_, SIGNAL(Signal_RenderImage(cv::Mat&)), this, SLOT(Slot_RenderImage(cv::Mat&)), Qt::QueuedConnection);
+
+    capStdThr_->start();
 }
 
 MyWindow2::~MyWindow2()
 {
     delete ui;
+    delete capStdThr_;
 }
 
 void MyWindow2::closeEvent(QCloseEvent *event)
 {
-    //capThread_.terminate();
-    capThread_.stop();
-    capThread_.waitForFinished();
+    capStdThr_->stop();
+    capStdThr_->waitForFinished();
 }
 
-void MyWindow2::Slot_RenderImage(cv::Mat& mat){
+void MyWindow2::Slot_RenderImage(cv::Mat& mat)
+{
     qDebug() << "Slot_RenderImage:";
 
     cv::Mat mat_dst;
