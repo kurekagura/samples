@@ -23,7 +23,9 @@ SOURCES += \
     main.cpp \
     mywindow1.cpp \
     mywindow2.cpp \
-    mywindow3.cpp
+    mywindow3.cpp \
+    mywindow4.cpp \
+    videodevicethread.cpp
 
 HEADERS += \
     captureqthread.h \
@@ -33,12 +35,15 @@ HEADERS += \
     mywindow1.h \
     mywindow2.h \
     mywindow3.h \
-    queuechannel.h
+    mywindow4.h \
+    queuechannel.h \
+    videodevicethread.h
 
 FORMS += \
     mywindow1.ui \
     mywindow2.ui \
-    mywindow3.ui
+    mywindow3.ui \
+    mywindow4.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

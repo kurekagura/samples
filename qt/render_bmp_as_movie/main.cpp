@@ -1,6 +1,7 @@
 #include "mywindow1.h"
 #include "mywindow2.h"
 #include "mywindow3.h"
+#include "mywindow4.h"
 
 #include <QApplication>
 
@@ -19,8 +20,11 @@ int main(int argc, char *argv[])
 //    w2.show();
 
     //キュー、条件変数を用いる
-    MyWindow3 w3;
-    w3.show();
+//    MyWindow3 w3;
+//    w3.show();
+
+    MyWindow4 w4;
+    w4.show();
 
     return a.exec();
 }

@@ -9,6 +9,7 @@ class CaptureStdThread : public QObject
     Q_OBJECT
 public:
     explicit CaptureStdThread(QObject *parent = nullptr);
+    virtual ~CaptureStdThread();
     void start();
     void stop();
     void waitForFinished();

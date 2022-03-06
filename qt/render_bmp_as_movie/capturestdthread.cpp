@@ -9,6 +9,10 @@ CaptureStdThread::CaptureStdThread(QObject *parent)
 {
 }
 
+CaptureStdThread::~CaptureStdThread()
+{
+}
+
 void CaptureStdThread::start()
 {
     thread_stop_requested_ = false;

@@ -27,13 +27,13 @@ MyWindow3::MyWindow3(QWidget *parent) :
 
 MyWindow3::~MyWindow3()
 {
-    delete ui;
     if(capThr_ != nullptr)
         delete capThr_;
     if(procThr_ != nullptr)
         delete procThr_;
     if(qch_ != nullptr)
         delete qch_;
+    delete ui;
 }
 
 void MyWindow3::closeEvent(QCloseEvent *event)

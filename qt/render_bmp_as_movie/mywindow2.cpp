@@ -10,14 +10,14 @@ MyWindow2::MyWindow2(QWidget *parent) :
 
     capStdThr_ = new CaptureStdThread(this);
     connect(capStdThr_, SIGNAL(Signal_RenderImage(cv::Mat&)), this, SLOT(Slot_RenderImage(cv::Mat&)), Qt::QueuedConnection);
-
     capStdThr_->start();
 }
 
 MyWindow2::~MyWindow2()
 {
+    if(capStdThr_ != nullptr)
+        delete capStdThr_;
     delete ui;
-    delete capStdThr_;
 }
 
 void MyWindow2::closeEvent(QCloseEvent *event)
