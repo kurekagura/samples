@@ -1,0 +1,703 @@
+-- Selecting Windows SDK version 10.0.19041.0 to target Windows 10.0.19043.
+-- Detected processor: AMD64
+-- libjpeg-turbo: VERSION = 2.1.2, BUILD = opencv-4.5.5-libjpeg-turbo
+-- Could NOT find OpenJPEG (minimal suitable version: 2.0, recommended version >= 2.3.1). OpenJPEG will be built from sources
+-- OpenJPEG: VERSION = 2.4.0, BUILD = opencv-4.5.5-openjp2-2.4.0
+-- OpenJPEG libraries will be built from sources: libopenjp2 (version "2.4.0")
+-- found Intel IPP (ICV version): 2020.0.0 [2020.0.0 Gold]
+-- at: O:/src/opencv-all/build4.5.5a/3rdparty/ippicv/ippicv_win/icv
+-- found Intel IPP Integration Wrappers sources: 2020.0.0
+-- at: O:/src/opencv-all/build4.5.5a/3rdparty/ippicv/ippicv_win/iw
+-- CUDA detected: 11.5
+-- CUDA NVCC target flags: -gencode;arch=compute_75,code=sm_75;-D_FORCE_INLINES
+-- CUDA: MSVS generator is detected. Disabling CMake re-run checks (CMAKE_SUPPRESS_REGENERATION=ON). You need to run CMake manually if updates are required.
+-- Could not find OpenBLAS include. Turning OpenBLAS_FOUND off
+-- Could not find OpenBLAS lib. Turning OpenBLAS_FOUND off
+-- Could NOT find BLAS (missing: BLAS_LIBRARIES) 
+-- LAPACK requires BLAS
+-- A library with LAPACK API not found. Please specify library location.
+-- VTK is not found. Please set -DVTK_DIR in CMake to VTK build directory, or to VTK install subdirectory with VTKConfig.cmake file
+-- Module opencv_alphamat disabled because the following dependencies are not found: Eigen
+-- freetype2:   NO
+-- harfbuzz:    NO
+-- Julia not found. Not compiling Julia Bindings. 
+-- Module opencv_ovis disabled because OGRE3D was not found
+-- No preference for use of exported gflags CMake configuration set, and no hints for include/library directories provided. Defaulting to preferring an installed/exported gflags CMake configuration if available.
+-- Failed to find installed gflags CMake configuration, searching for gflags build directories exported with CMake.
+-- Failed to find gflags - Failed to find an installed/exported CMake configuration for gflags, will perform search for installed gflags components.
+-- Failed to find gflags - Could not find gflags include directory, set GFLAGS_INCLUDE_DIR to directory containing gflags/gflags.h
+-- Failed to find glog - Could not find glog include directory, set GLOG_INCLUDE_DIR to directory containing glog/logging.h
+-- Module opencv_sfm disabled because the following dependencies are not found: Eigen Glog/Gflags
+-- Tesseract:   NO
+-- Processing WORLD modules...
+--     module opencv_cudev...
+--     module opencv_core...
+-- Allocator metrics storage type: 'long long'
+--     module opencv_cudaarithm...
+--     module opencv_flann...
+--     module opencv_imgproc...
+--     module opencv_intensity_transform...
+--     module opencv_ml...
+--     module opencv_phase_unwrapping...
+--     module opencv_plot...
+--     module opencv_quality...
+--     module opencv_reg...
+--     module opencv_surface_matching...
+--     module opencv_cudafilters...
+--     module opencv_cudaimgproc...
+--     module opencv_cudawarping...
+--     module opencv_dnn...
+-- Registering hook 'INIT_MODULE_SOURCES_opencv_dnn': O:/src/opencv-all/opencv/modules/dnn/cmake/hooks/INIT_MODULE_SOURCES_opencv_dnn.cmake
+--     module opencv_dnn_superres...
+--     module opencv_features2d...
+--     module opencv_fuzzy...
+--     module opencv_hfs...
+--     module opencv_imgcodecs...
+-- imgcodecs: OpenEXR codec is disabled in runtime. Details: https://github.com/opencv/opencv/issues/21326
+--     module opencv_line_descriptor...
+--     module opencv_photo...
+--     module opencv_saliency...
+--     module opencv_text...
+--     module opencv_videoio...
+--     module opencv_wechat_qrcode...
+--     module opencv_xphoto...
+--     module opencv_barcode...
+--     module opencv_calib3d...
+--     module opencv_cudacodec...
+--     module opencv_cudafeatures2d...
+--     module opencv_cudastereo...
+--     module opencv_datasets...
+--     module opencv_highgui...
+-- highgui: using builtin backend: QT5
+--     module opencv_mcc...
+--     module opencv_objdetect...
+--     module opencv_rapid...
+--     module opencv_rgbd...
+-- rgbd: Eigen support is disabled. Eigen is Required for Posegraph optimization
+--     module opencv_shape...
+--     module opencv_structured_light...
+--     module opencv_video...
+--     module opencv_xfeatures2d...
+--     module opencv_ximgproc...
+--     module opencv_xobjdetect...
+--     module opencv_aruco...
+--     module opencv_bgsegm...
+--     module opencv_bioinspired...
+--     module opencv_ccalib...
+--     module opencv_cudabgsegm...
+--     module opencv_cudalegacy...
+--     module opencv_cudaobjdetect...
+--     module opencv_dnn_objdetect...
+--     module opencv_dpm...
+--     module opencv_face...
+--     module opencv_gapi...
+--     module opencv_optflow...
+--     module opencv_stitching...
+--     module opencv_tracking...
+--     module opencv_cudaoptflow...
+-- Building with NVIDIA Optical Flow API 2.0
+--     module opencv_stereo...
+--     module opencv_superres...
+--     module opencv_videostab...
+-- Processing WORLD modules... DONE
+-- Excluding from source files list: <BUILD>/modules/world/layers/layers_common.rvv.cpp
+-- Found 'misc' Python modules from O:/src/opencv-all/opencv/modules/python/package/extra_modules
+-- Found 'mat_wrapper;utils' Python modules from O:/src/opencv-all/opencv/modules/core/misc/python/package
+-- Found 'gapi' Python modules from O:/src/opencv-all/opencv/modules/gapi/misc/python/package
+-- Found 'misc' Python modules from O:/src/opencv-all/opencv/modules/python/package/extra_modules
+-- Found 'mat_wrapper;utils' Python modules from O:/src/opencv-all/opencv/modules/core/misc/python/package
+-- Found 'gapi' Python modules from O:/src/opencv-all/opencv/modules/gapi/misc/python/package
+CMake Warning at cmake/OpenCVGenSetupVars.cmake:54 (message):
+  CONFIGURATION IS NOT SUPPORTED: validate setupvars script in install
+  directory
+Call Stack (most recent call first):
+  CMakeLists.txt:1035 (include)
+
+
+-- 
+-- General configuration for OpenCV 4.5.5 =====================================
+--   Version control:               4.5.5-dirty
+-- 
+--   Extra modules:
+--     Location (extra):            O:/src/opencv-all/opencv_contrib/modules
+--     Version control (extra):     4.5.5
+-- 
+--   Platform:
+--     Timestamp:                   2022-03-13T08:59:54Z
+--     Host:                        Windows 10.0.19043 AMD64
+--     CMake:                       3.17.0
+--     CMake generator:             Visual Studio 16 2019
+--     CMake build tool:            C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe
+--     MSVC:                        1929
+--     Configuration:               Release
+-- 
+--   CPU/HW features:
+--     Baseline:                    SSE SSE2 SSE3 SSSE3 SSE4_1 POPCNT SSE4_2 FP16 FMA3 AVX AVX2
+--       requested:                 AVX2
+--     Dispatched code generation:  AVX512_SKX
+--       requested:                 SSE4_1 SSE4_2 AVX FP16 AVX2 AVX512_SKX
+--       AVX512_SKX (8 files):      + AVX_512F AVX512_COMMON AVX512_SKX
+-- 
+--   C/C++:
+--     Built as dynamic libs?:      YES
+--     C++ standard:                11
+--     C++ Compiler:                C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe  (ver 19.29.30139.0)
+--     C++ flags (Release):         /DWIN32 /D_WINDOWS /W4 /GR  /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /Gy /bigobj /Oi  /fp:fast         /arch:AVX  /arch:AVX /arch:AVX2 /EHa /wd4127 /wd4251 /wd4324 /wd4275 /wd4512 /wd4589 /MP  /MD /O2 /Ob2 /DNDEBUG 
+--     C++ flags (Debug):           /DWIN32 /D_WINDOWS /W4 /GR  /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /Gy /bigobj /Oi  /fp:fast         /arch:AVX  /arch:AVX /arch:AVX2 /EHa /wd4127 /wd4251 /wd4324 /wd4275 /wd4512 /wd4589 /MP  /MDd /Zi /Ob0 /Od /RTC1 
+--     C Compiler:                  C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe
+--     C flags (Release):           /DWIN32 /D_WINDOWS /W3  /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /Gy /bigobj /Oi  /fp:fast         /arch:AVX  /arch:AVX /arch:AVX2 /MP   /MD /O2 /Ob2 /DNDEBUG 
+--     C flags (Debug):             /DWIN32 /D_WINDOWS /W3  /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /Gy /bigobj /Oi  /fp:fast         /arch:AVX  /arch:AVX /arch:AVX2 /MP /MDd /Zi /Ob0 /Od /RTC1 
+--     Linker flags (Release):      /machine:x64  /INCREMENTAL:NO 
+--     Linker flags (Debug):        /machine:x64  /debug /INCREMENTAL 
+--     ccache:                      NO
+--     Precompiled headers:         NO
+--     Extra dependencies:          cudart_static.lib nppc.lib nppial.lib nppicc.lib nppidei.lib nppif.lib nppig.lib nppim.lib nppist.lib nppisu.lib nppitc.lib npps.lib cublas.lib cudnn.lib cufft.lib -LIBPATH:C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64
+--     3rdparty dependencies:
+-- 
+--   OpenCV modules:
+--     To be built:                 aruco barcode bgsegm bioinspired calib3d ccalib core cudaarithm cudabgsegm cudacodec cudafeatures2d cudafilters cudaimgproc cudalegacy cudaobjdetect cudaoptflow cudastereo cudawarping cudev datasets dnn dnn_objdetect dnn_superres dpm face features2d flann fuzzy gapi hfs highgui img_hash imgcodecs imgproc intensity_transform line_descriptor mcc ml objdetect optflow phase_unwrapping photo plot python3 quality rapid reg rgbd saliency shape stereo stitching structured_light superres surface_matching text tracking ts video videoio videostab wechat_qrcode world xfeatures2d ximgproc xobjdetect xphoto
+--     Disabled:                    cvv
+--     Disabled by dependency:      -
+--     Unavailable:                 alphamat freetype hdf java julia matlab ovis python2 python2 sfm viz
+--     Applications:                tests perf_tests apps
+--     Documentation:               NO
+--     Non-free algorithms:         NO
+-- 
+--   Windows RT support:            NO
+-- 
+--   GUI: 
+--     QT:                          YES (ver 5.14.1 )
+--       QT OpenGL support:         YES (Qt5::OpenGL 5.14.1)
+--     Win32 UI:                    YES
+--     OpenGL support:              YES (opengl32 glu32)
+--     VTK support:                 NO
+-- 
+--   Media I/O: 
+--     ZLib:                        build (ver 1.2.11)
+--     JPEG:                        build-libjpeg-turbo (ver 2.1.2-62)
+--     WEBP:                        build (ver encoder: 0x020f)
+--     PNG:                         build (ver 1.6.37)
+--     TIFF:                        build (ver 42 - 4.2.0)
+--     JPEG 2000:                   build (ver 2.4.0)
+--     OpenEXR:                     build (ver 2.3.0)
+--     HDR:                         YES
+--     SUNRASTER:                   YES
+--     PXM:                         YES
+--     PFM:                         YES
+-- 
+--   Video I/O:
+--     DC1394:                      NO
+--     FFMPEG:                      YES (prebuilt binaries)
+--       avcodec:                   YES (58.134.100)
+--       avformat:                  YES (58.76.100)
+--       avutil:                    YES (56.70.100)
+--       swscale:                   YES (5.9.100)
+--       avresample:                YES (4.0.0)
+--     GStreamer:                   YES (1.18.5)
+--     DirectShow:                  YES
+--     Media Foundation:            YES
+--       DXVA:                      YES
+--     Intel Media SDK:             YES (C:/sw/IntelSWTools/Intel(R) Media SDK 2021 R1/Software Development Kit/lib/x64/libmfx_vs2015.lib)
+-- 
+--   Parallel framework:            Concurrency
+-- 
+--   Trace:                         YES (with Intel ITT)
+-- 
+--   Other third-party libraries:
+--     Intel IPP:                   2020.0.0 Gold [2020.0.0]
+--            at:                   O:/src/opencv-all/build4.5.5a/3rdparty/ippicv/ippicv_win/icv
+--     Intel IPP IW:                sources (2020.0.0)
+--               at:                O:/src/opencv-all/build4.5.5a/3rdparty/ippicv/ippicv_win/iw
+--     Lapack:                      NO
+--     Eigen:                       NO
+--     Custom HAL:                  NO
+--     Protobuf:                    build (3.19.1)
+-- 
+--   NVIDIA CUDA:                   YES (ver 11.5, CUFFT CUBLAS NVCUVID FAST_MATH)
+--     NVIDIA GPU arch:             75
+--     NVIDIA PTX archs:
+-- 
+--   cuDNN:                         YES (ver 8.3.1)
+-- 
+--   OpenCL:                        YES (NVD3D11)
+--     Include path:                O:/src/opencv-all/opencv/3rdparty/include/opencl/1.2
+--     Link libraries:              Dynamic load
+-- 
+--   Python 3:
+--     Interpreter:                 C:/venv/opencv-4.5.5a/Scripts/python.exe (ver 3.7.3)
+--     Libraries:                   C:/sw/Python37/libs/python37.lib (ver 3.7.3)
+--     numpy:                       C:/venv/opencv-4.5.5a/lib/site-packages/numpy/core/include (ver 1.21.5)
+--     install path:                C:/venv/opencv-4.5.5a/Lib/site-packages/cv2/python-3.7
+-- 
+--   Python (for build):            C:/venv/opencv-4.5.5a/Scripts/python.exe
+-- 
+--   Java:                          
+--     ant:                         NO
+--     JNI:                         C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/include C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/include/win32 C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/include
+--     Java wrappers:               NO
+--     Java tests:                  NO
+-- 
+--   Install to:                    C:/lib/opencv-4.5.5a
+-- -----------------------------------------------------------------
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: O:/src/opencv-all/build4.5.5a
+-- Cache values
+ANT_EXECUTABLE:FILEPATH=ANT_EXECUTABLE-NOTFOUND
+BLAS_Accelerate_LIBRARY:FILEPATH=BLAS_Accelerate_LIBRARY-NOTFOUND
+BLAS_acml_LIBRARY:FILEPATH=BLAS_acml_LIBRARY-NOTFOUND
+BLAS_acml_mp_LIBRARY:FILEPATH=BLAS_acml_mp_LIBRARY-NOTFOUND
+BLAS_blas_LIBRARY:FILEPATH=BLAS_blas_LIBRARY-NOTFOUND
+BLAS_blis_LIBRARY:FILEPATH=BLAS_blis_LIBRARY-NOTFOUND
+BLAS_complib.sgimath_LIBRARY:FILEPATH=BLAS_complib.sgimath_LIBRARY-NOTFOUND
+BLAS_cxml_LIBRARY:FILEPATH=BLAS_cxml_LIBRARY-NOTFOUND
+BLAS_dxml_LIBRARY:FILEPATH=BLAS_dxml_LIBRARY-NOTFOUND
+BLAS_essl_LIBRARY:FILEPATH=BLAS_essl_LIBRARY-NOTFOUND
+BLAS_goto2_LIBRARY:FILEPATH=BLAS_goto2_LIBRARY-NOTFOUND
+BLAS_mkl_intel_c_LIBRARY:FILEPATH=BLAS_mkl_intel_c_LIBRARY-NOTFOUND
+BLAS_mkl_intel_lp64_LIBRARY:FILEPATH=BLAS_mkl_intel_lp64_LIBRARY-NOTFOUND
+BLAS_mkl_rt_LIBRARY:FILEPATH=BLAS_mkl_rt_LIBRARY-NOTFOUND
+BLAS_openblas_LIBRARY:FILEPATH=BLAS_openblas_LIBRARY-NOTFOUND
+BLAS_scsl_LIBRARY:FILEPATH=BLAS_scsl_LIBRARY-NOTFOUND
+BLAS_sgemm_LIBRARY:FILEPATH=BLAS_sgemm_LIBRARY-NOTFOUND
+BLAS_sunperf_LIBRARY:FILEPATH=BLAS_sunperf_LIBRARY-NOTFOUND
+BLAS_vecLib_LIBRARY:FILEPATH=BLAS_vecLib_LIBRARY-NOTFOUND
+BUILD_CUDA_STUBS:BOOL=OFF
+BUILD_DOCS:BOOL=OFF
+BUILD_EXAMPLES:BOOL=OFF
+BUILD_IPP_IW:BOOL=ON
+BUILD_ITT:BOOL=ON
+BUILD_JASPER:BOOL=ON
+BUILD_JAVA:BOOL=ON
+BUILD_JPEG:BOOL=ON
+BUILD_LIST:STRING=
+BUILD_OPENEXR:BOOL=OFF
+BUILD_OPENJPEG:BOOL=ON
+BUILD_PACKAGE:BOOL=ON
+BUILD_PERF_TESTS:BOOL=ON
+BUILD_PNG:BOOL=ON
+BUILD_PROTOBUF:BOOL=ON
+BUILD_SHARED_LIBS:BOOL=ON
+BUILD_TBB:BOOL=OFF
+BUILD_TESTS:BOOL=ON
+BUILD_TIFF:BOOL=ON
+BUILD_USE_SYMLINKS:BOOL=OFF
+BUILD_WEBP:BOOL=ON
+BUILD_WITH_DEBUG_INFO:BOOL=OFF
+BUILD_WITH_DYNAMIC_IPP:BOOL=OFF
+BUILD_WITH_STATIC_CRT:BOOL=ON
+BUILD_ZLIB:BOOL=ON
+BUILD_opencv_apps:BOOL=ON
+BUILD_opencv_aruco:BOOL=ON
+BUILD_opencv_barcode:BOOL=ON
+BUILD_opencv_bgsegm:BOOL=ON
+BUILD_opencv_bioinspired:BOOL=ON
+BUILD_opencv_calib3d:BOOL=ON
+BUILD_opencv_ccalib:BOOL=ON
+BUILD_opencv_core:BOOL=ON
+BUILD_opencv_cudaarithm:BOOL=ON
+BUILD_opencv_cudabgsegm:BOOL=ON
+BUILD_opencv_cudacodec:BOOL=ON
+BUILD_opencv_cudafeatures2d:BOOL=ON
+BUILD_opencv_cudafilters:BOOL=ON
+BUILD_opencv_cudaimgproc:BOOL=ON
+BUILD_opencv_cudalegacy:BOOL=ON
+BUILD_opencv_cudaobjdetect:BOOL=ON
+BUILD_opencv_cudaoptflow:BOOL=ON
+BUILD_opencv_cudastereo:BOOL=ON
+BUILD_opencv_cudawarping:BOOL=ON
+BUILD_opencv_cudev:BOOL=ON
+BUILD_opencv_cvv:BOOL=OFF
+BUILD_opencv_datasets:BOOL=ON
+BUILD_opencv_dnn:BOOL=ON
+BUILD_opencv_dnn_objdetect:BOOL=ON
+BUILD_opencv_dnn_superres:BOOL=ON
+BUILD_opencv_dpm:BOOL=ON
+BUILD_opencv_face:BOOL=ON
+BUILD_opencv_features2d:BOOL=ON
+BUILD_opencv_flann:BOOL=ON
+BUILD_opencv_fuzzy:BOOL=ON
+BUILD_opencv_gapi:BOOL=ON
+BUILD_opencv_hfs:BOOL=ON
+BUILD_opencv_highgui:BOOL=ON
+BUILD_opencv_img_hash:BOOL=ON
+BUILD_opencv_imgcodecs:BOOL=ON
+BUILD_opencv_imgproc:BOOL=ON
+BUILD_opencv_intensity_transform:BOOL=ON
+BUILD_opencv_java_bindings_generator:BOOL=ON
+BUILD_opencv_js:BOOL=OFF
+BUILD_opencv_js_bindings_generator:BOOL=ON
+BUILD_opencv_line_descriptor:BOOL=ON
+BUILD_opencv_mcc:BOOL=ON
+BUILD_opencv_ml:BOOL=ON
+BUILD_opencv_objc_bindings_generator:BOOL=ON
+BUILD_opencv_objdetect:BOOL=ON
+BUILD_opencv_optflow:BOOL=ON
+BUILD_opencv_phase_unwrapping:BOOL=ON
+BUILD_opencv_photo:BOOL=ON
+BUILD_opencv_plot:BOOL=ON
+BUILD_opencv_python3:BOOL=ON
+BUILD_opencv_python_bindings_generator:BOOL=ON
+BUILD_opencv_python_tests:BOOL=ON
+BUILD_opencv_quality:BOOL=ON
+BUILD_opencv_rapid:BOOL=ON
+BUILD_opencv_reg:BOOL=ON
+BUILD_opencv_rgbd:BOOL=ON
+BUILD_opencv_saliency:BOOL=ON
+BUILD_opencv_shape:BOOL=ON
+BUILD_opencv_stereo:BOOL=ON
+BUILD_opencv_stitching:BOOL=ON
+BUILD_opencv_structured_light:BOOL=ON
+BUILD_opencv_superres:BOOL=ON
+BUILD_opencv_surface_matching:BOOL=ON
+BUILD_opencv_text:BOOL=ON
+BUILD_opencv_tracking:BOOL=ON
+BUILD_opencv_ts:BOOL=ON
+BUILD_opencv_video:BOOL=ON
+BUILD_opencv_videoio:BOOL=ON
+BUILD_opencv_videostab:BOOL=ON
+BUILD_opencv_wechat_qrcode:BOOL=ON
+BUILD_opencv_world:BOOL=ON
+BUILD_opencv_xfeatures2d:BOOL=ON
+BUILD_opencv_ximgproc:BOOL=ON
+BUILD_opencv_xobjdetect:BOOL=ON
+BUILD_opencv_xphoto:BOOL=ON
+CLAMDBLAS_INCLUDE_DIR:PATH=CLAMDBLAS_INCLUDE_DIR-NOTFOUND
+CLAMDBLAS_ROOT_DIR:PATH=CLAMDBLAS_ROOT_DIR-NOTFOUND
+CLAMDFFT_INCLUDE_DIR:PATH=CLAMDFFT_INCLUDE_DIR-NOTFOUND
+CLAMDFFT_ROOT_DIR:PATH=CLAMDFFT_ROOT_DIR-NOTFOUND
+CMAKE_CXX_FLAGS:STRING=/DWIN32 /D_WINDOWS /W3 /GR /EHsc
+CMAKE_CXX_FLAGS_DEBUG:STRING=/MDd /Zi /Ob0 /Od /RTC1
+CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 /DNDEBUG
+CMAKE_CXX_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DNDEBUG
+CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=/MD /Zi /O2 /Ob1 /DNDEBUG
+CMAKE_CXX_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
+CMAKE_C_FLAGS:STRING=/DWIN32 /D_WINDOWS /W3
+CMAKE_C_FLAGS_DEBUG:STRING=/MDd /Zi /Ob0 /Od /RTC1
+CMAKE_C_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 /DNDEBUG
+CMAKE_C_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DNDEBUG
+CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MD /Zi /O2 /Ob1 /DNDEBUG
+CMAKE_C_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
+CMAKE_EXE_LINKER_FLAGS:STRING=/machine:x64
+CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
+CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
+CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
+CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
+CMAKE_INSTALL_PREFIX:PATH=C:/lib/opencv-4.5.5a
+CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/link.exe
+CMAKE_MODULE_LINKER_FLAGS:STRING=/machine:x64
+CMAKE_MODULE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
+CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
+CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
+CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
+CMAKE_MT:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/10.0.19041.0/x64/mt.exe
+CMAKE_RC_COMPILER:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/10.0.19041.0/x64/rc.exe
+CMAKE_RC_FLAGS:STRING=-DWIN32
+CMAKE_RC_FLAGS_DEBUG:STRING=-D_DEBUG
+CMAKE_RC_FLAGS_MINSIZEREL:STRING=
+CMAKE_RC_FLAGS_RELEASE:STRING=
+CMAKE_RC_FLAGS_RELWITHDEBINFO:STRING=
+CMAKE_SHARED_LINKER_FLAGS:STRING=/machine:x64
+CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
+CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
+CMAKE_SHARED_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
+CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
+CMAKE_SKIP_INSTALL_RPATH:BOOL=NO
+CMAKE_SKIP_RPATH:BOOL=NO
+CMAKE_STATIC_LINKER_FLAGS:STRING=/machine:x64
+CMAKE_STATIC_LINKER_FLAGS_DEBUG:STRING=
+CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL:STRING=
+CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
+CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
+CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+CPACK_BINARY_7Z:BOOL=OFF
+CPACK_BINARY_IFW:BOOL=OFF
+CPACK_BINARY_NSIS:BOOL=ON
+CPACK_BINARY_NUGET:BOOL=OFF
+CPACK_BINARY_WIX:BOOL=OFF
+CPACK_BINARY_ZIP:BOOL=OFF
+CPACK_SOURCE_7Z:BOOL=ON
+CPACK_SOURCE_ZIP:BOOL=ON
+CPU_BASELINE:STRING=AVX2
+CPU_DISPATCH:STRING=SSE4_1;SSE4_2;AVX;FP16;AVX2;AVX512_SKX
+CUDA_64_BIT_DEVICE_CODE:BOOL=ON
+CUDA_ARCH_BIN:STRING=7.5
+CUDA_ARCH_PTX:STRING=
+CUDA_ATTACH_VS_BUILD_RULE_TO_CUDA_FILE:BOOL=ON
+CUDA_BUILD_CUBIN:BOOL=OFF
+CUDA_BUILD_EMULATION:BOOL=OFF
+CUDA_CUDART_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cudart.lib
+CUDA_CUDA_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cuda.lib
+CUDA_ENABLE_DEPRECATED_GENERATION:BOOL=OFF
+CUDA_FAST_MATH:BOOL=ON
+CUDA_GENERATED_OUTPUT_DIR:PATH=
+CUDA_GENERATION:STRING=Turing
+CUDA_HOST_COMPILATION_CPP:BOOL=ON
+CUDA_HOST_COMPILER:FILEPATH=$(VCInstallDir)Tools/MSVC/$(VCToolsVersion)/bin/Host$(Platform)/$(PlatformTarget)
+CUDA_NVCC_EXECUTABLE:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/bin/nvcc.exe
+CUDA_NVCC_FLAGS:STRING=
+CUDA_NVCC_FLAGS_DEBUG:STRING=
+CUDA_NVCC_FLAGS_MINSIZEREL:STRING=
+CUDA_NVCC_FLAGS_RELEASE:STRING=
+CUDA_NVCC_FLAGS_RELWITHDEBINFO:STRING=
+CUDA_OpenCL_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/OpenCL.lib
+CUDA_PROPAGATE_HOST_FLAGS:BOOL=ON
+CUDA_SDK_ROOT_DIR:PATH=CUDA_SDK_ROOT_DIR-NOTFOUND
+CUDA_SEPARABLE_COMPILATION:BOOL=OFF
+CUDA_TOOLKIT_INCLUDE:PATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/include
+CUDA_TOOLKIT_ROOT_DIR:PATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5
+CUDA_USE_STATIC_CUDA_RUNTIME:BOOL=ON
+CUDA_VERBOSE_BUILD:BOOL=OFF
+CUDA_VERSION:STRING=11.5
+CUDA_cublas_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cublas.lib
+CUDA_cudadevrt_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cudadevrt.lib
+CUDA_cudart_static_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cudart_static.lib
+CUDA_cufft_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cufft.lib
+CUDA_cupti_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/extras/CUPTI/lib64/cupti.lib
+CUDA_curand_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/curand.lib
+CUDA_cusolver_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cusolver.lib
+CUDA_cusparse_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cusparse.lib
+CUDA_nppc_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppc.lib
+CUDA_nppial_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppial.lib
+CUDA_nppicc_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppicc.lib
+CUDA_nppicom_LIBRARY:FILEPATH=CUDA_nppicom_LIBRARY-NOTFOUND
+CUDA_nppidei_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppidei.lib
+CUDA_nppif_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppif.lib
+CUDA_nppig_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppig.lib
+CUDA_nppim_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppim.lib
+CUDA_nppist_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppist.lib
+CUDA_nppisu_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppisu.lib
+CUDA_nppitc_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nppitc.lib
+CUDA_npps_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/npps.lib
+CUDA_nvToolsExt_LIBRARY:FILEPATH=CUDA_nvToolsExt_LIBRARY-NOTFOUND
+CUDA_nvcuvenc_LIBRARY:FILEPATH=CUDA_nvcuvenc_LIBRARY-NOTFOUND
+CUDA_nvcuvid_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/nvcuvid.lib
+CUDNN_INCLUDE_DIR:PATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/include
+CUDNN_LIBRARY:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cudnn.lib
+CUDNN_VERSION:STRING=8.3.1
+CV_DISABLE_OPTIMIZATION:BOOL=OFF
+CV_ENABLE_INTRINSICS:BOOL=ON
+CV_TRACE:BOOL=ON
+Ceres_DIR:PATH=Ceres_DIR-NOTFOUND
+DC1394_INCLUDE:PATH=DC1394_INCLUDE-NOTFOUND
+DC1394_LIBRARY:FILEPATH=DC1394_LIBRARY-NOTFOUND
+EIGEN_INCLUDE_PATH:PATH=EIGEN_INCLUDE_PATH-NOTFOUND
+ENABLE_BUILD_HARDENING:BOOL=OFF
+ENABLE_CCACHE:BOOL=OFF
+ENABLE_CONFIG_VERIFICATION:BOOL=OFF
+ENABLE_FAST_MATH:BOOL=ON
+ENABLE_FLAKE8:BOOL=OFF
+ENABLE_IMPL_COLLECTION:BOOL=OFF
+ENABLE_INSTRUMENTATION:BOOL=OFF
+ENABLE_LTO:BOOL=OFF
+ENABLE_NOISY_WARNINGS:BOOL=OFF
+ENABLE_PIC:BOOL=ON
+ENABLE_PYLINT:BOOL=OFF
+ENABLE_SOLUTION_FOLDERS:BOOL=ON
+EXECUTABLE_OUTPUT_PATH:PATH=O:/src/opencv-all/build4.5.5a/bin
+Eigen3_DIR:PATH=Eigen3_DIR-NOTFOUND
+GFLAGS_INCLUDE_DIR:PATH=GFLAGS_INCLUDE_DIR-NOTFOUND
+GFLAGS_NAMESPACE:STRING=
+GIT_EXECUTABLE:FILEPATH=C:/sw/Git/cmd/git.exe
+GLOG_INCLUDE_DIR:PATH=GLOG_INCLUDE_DIR-NOTFOUND
+GSTREAMER_app_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstapp-1.0.lib
+GSTREAMER_audio_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstaudio-1.0.lib
+GSTREAMER_base_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstbase-1.0.lib
+GSTREAMER_glib_INCLUDE_DIR:PATH=C:/gstreamer/1.0/msvc_x86_64/include/glib-2.0
+GSTREAMER_glib_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/glib-2.0.lib
+GSTREAMER_glibconfig_INCLUDE_DIR:PATH=C:/gstreamer/1.0/msvc_x86_64/lib/glib-2.0/include
+GSTREAMER_gobject_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gobject-2.0.lib
+GSTREAMER_gst_INCLUDE_DIR:PATH=C:/gstreamer/1.0/msvc_x86_64/include/gstreamer-1.0
+GSTREAMER_gstreamer_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstreamer-1.0.lib
+GSTREAMER_pbutils_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstpbutils-1.0.lib
+GSTREAMER_riff_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstriff-1.0.lib
+GSTREAMER_video_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/gstvideo-1.0.lib
+Gflags_DIR:PATH=Gflags_DIR-NOTFOUND
+Glog_DIR:PATH=Glog_DIR-NOTFOUND
+HAVE_IEEEFP:STRING=1
+HDF5_C_LIBRARY:FILEPATH=HDF5_C_LIBRARY-NOTFOUND
+HDF5_INCLUDE_DIRS:PATH=HDF5_INCLUDE_DIRS-NOTFOUND
+HIGHGUI_ENABLE_PLUGINS:BOOL=ON
+HIGHGUI_PLUGIN_LIST:STRING=
+HOST_BIG_ENDIAN:STRING=OFF
+HOST_FILLORDER:STRING=FILLORDER_LSB2MSB
+INSTALL_CREATE_DISTRIB:BOOL=OFF
+INSTALL_C_EXAMPLES:BOOL=OFF
+INSTALL_PDB:BOOL=ON
+INSTALL_PDB_COMPONENT_EXCLUDE_FROM_ALL:BOOL=ON
+INSTALL_PYTHON_EXAMPLES:BOOL=ON
+INSTALL_TESTS:BOOL=OFF
+Iconv_INCLUDE_DIR:PATH=C:/gstreamer/1.0/msvc_x86_64/include
+Iconv_LIBRARY:FILEPATH=C:/gstreamer/1.0/msvc_x86_64/lib/iconv.lib
+JAVA_AWT_INCLUDE_PATH:PATH=C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/include
+JAVA_AWT_LIBRARY:FILEPATH=C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/lib/jawt.lib
+JAVA_INCLUDE_PATH:PATH=C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/include
+JAVA_INCLUDE_PATH2:PATH=C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/include/win32
+JAVA_JVM_LIBRARY:FILEPATH=C:/Program Files/Eclipse Foundation/jdk-8.0.302.8-hotspot/lib/jvm.lib
+LAPACK_CBLAS_H:STRING=
+LAPACK_IMPL:STRING=Unknown
+LAPACK_INCLUDE_DIR:PATH=
+LAPACK_LAPACKE_H:STRING=
+LAPACK_LIBRARIES:STRING=
+Lept_LIBRARY:FILEPATH=Lept_LIBRARY-NOTFOUND
+MFX_INCLUDE:PATH=C:/sw/IntelSWTools/Intel(R) Media SDK 2021 R1/Software Development Kit/include
+MFX_LIBRARY:FILEPATH=C:/sw/IntelSWTools/Intel(R) Media SDK 2021 R1/Software Development Kit/lib/x64/libmfx_vs2015.lib
+MKL_ROOT_DIR:PATH=MKL_ROOT_DIR-NOTFOUND
+MKL_USE_SINGLE_DYNAMIC_LIBRARY:BOOL=OFF
+MKL_WITH_OPENMP:BOOL=OFF
+MKL_WITH_TBB:BOOL=OFF
+M_LIBRARY:FILEPATH=M_LIBRARY-NOTFOUND
+OGRE_DIR:PATH=OGRE_DIR-NOTFOUND
+OPENCL_FOUND:BOOL=ON
+OPENCL_INCLUDE_DIR:PATH=O:/src/opencv-all/opencv/3rdparty/include/opencl/1.2
+OPENCL_LIBRARY:STRING=
+OPENCV_CMAKE_MACRO_WIN32_WINNT:STRING=0x0601
+OPENCV_CONFIG_FILE_INCLUDE_DIR:PATH=O:/src/opencv-all/build4.5.5a
+OPENCV_DISABLE_FILESYSTEM_SUPPORT:BOOL=OFF
+OPENCV_DNN_CUDA:BOOL=ON
+OPENCV_DNN_OPENCL:BOOL=ON
+OPENCV_DNN_PERF_CAFFE:BOOL=OFF
+OPENCV_DNN_PERF_CLCAFFE:BOOL=OFF
+OPENCV_DOWNLOAD_PARAMS:STRING=INACTIVITY_TIMEOUT;60;TIMEOUT;600
+OPENCV_DOWNLOAD_PATH:PATH=O:/src/opencv-all/opencv/.cache
+OPENCV_DOWNLOAD_TRIES_LIST:STRING=1
+OPENCV_DUMP_HOOKS_FLOW:BOOL=OFF
+OPENCV_ENABLE_ALLOCATOR_STATS:BOOL=ON
+OPENCV_ENABLE_ATOMIC_LONG_LONG:BOOL=ON
+OPENCV_ENABLE_MEMALIGN:BOOL=ON
+OPENCV_ENABLE_MEMORY_SANITIZER:BOOL=OFF
+OPENCV_ENABLE_NONFREE:BOOL=OFF
+OPENCV_EXTRA_MODULES_PATH:PATH=O:/src/opencv-all/opencv_contrib/modules
+OPENCV_FORCE_3RDPARTY_BUILD:BOOL=OFF
+OPENCV_FORCE_PYTHON_LIBS:BOOL=OFF
+OPENCV_GAPI_GSTREAMER:BOOL=ON
+OPENCV_GENERATE_PKGCONFIG:BOOL=OFF
+OPENCV_GENERATE_SETUPVARS:BOOL=ON
+OPENCV_IPP_GAUSSIAN_BLUR:BOOL=OFF
+OPENCV_JAVA_SOURCE_VERSION:STRING=
+OPENCV_JAVA_TARGET_VERSION:STRING=
+OPENCV_MATHJAX_RELPATH:STRING=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0
+OPENCV_MSVC_PARALLEL:STRING=ON
+OPENCV_PYTHON3_VERSION:BOOL=OFF
+OPENCV_TIMESTAMP:STRING=2022-03-13T08:59:54Z
+OPENCV_WARNINGS_ARE_ERRORS:BOOL=OFF
+OPENEXR_HALF_LIBRARY:FILEPATH=OPENEXR_HALF_LIBRARY-NOTFOUND
+OPENEXR_IEX_LIBRARY:FILEPATH=OPENEXR_IEX_LIBRARY-NOTFOUND
+OPENEXR_ILMTHREAD_LIBRARY:FILEPATH=OPENEXR_ILMTHREAD_LIBRARY-NOTFOUND
+OPENEXR_IMATH_LIBRARY:FILEPATH=OPENEXR_IMATH_LIBRARY-NOTFOUND
+OPENEXR_INCLUDE_PATH:PATH=OPENEXR_INCLUDE_PATH-NOTFOUND
+OPENEXR_ROOT:STRING=C:/Deploy
+OPENGL_gl_LIBRARY:STRING=opengl32
+OPENGL_glu_LIBRARY:STRING=glu32
+OPJ_DISABLE_TPSOT_FIX:BOOL=OFF
+OPJ_USE_THREAD:BOOL=ON
+OpenBLAS_INCLUDE_DIR:PATH=OpenBLAS_INCLUDE_DIR-NOTFOUND
+OpenBLAS_LIB:FILEPATH=OpenBLAS_LIB-NOTFOUND
+OpenCV_HAL_DIR:PATH=OpenCV_HAL_DIR-NOTFOUND
+OpenEXR_DIR:PATH=OpenEXR_DIR-NOTFOUND
+PARALLEL_ENABLE_PLUGINS:BOOL=ON
+PROTOBUF_UPDATE_FILES:BOOL=OFF
+PYTHON2_EXECUTABLE:FILEPATH=
+PYTHON2_INCLUDE_DIR:PATH=
+PYTHON2_INCLUDE_DIR2:PATH=
+PYTHON2_LIBRARY:FILEPATH=
+PYTHON2_LIBRARY_DEBUG:FILEPATH=
+PYTHON2_NUMPY_INCLUDE_DIRS:PATH=
+PYTHON2_PACKAGES_PATH:PATH=
+PYTHON3_EXECUTABLE:FILEPATH=C:/venv/opencv-4.5.5a/Scripts/python.exe
+PYTHON3_INCLUDE_DIR:PATH=C:/sw/Python37/include
+PYTHON3_INCLUDE_DIR2:PATH=
+PYTHON3_LIBRARY:FILEPATH=C:/sw/Python37/libs/python37.lib
+PYTHON3_LIBRARY_DEBUG:FILEPATH=PYTHON_DEBUG_LIBRARY-NOTFOUND
+PYTHON3_NUMPY_INCLUDE_DIRS:PATH=C:/venv/opencv-4.5.5a/lib/site-packages/numpy/core/include
+Qt5Concurrent_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5Concurrent
+Qt5Core_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5Core
+Qt5Gui_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5Gui
+Qt5OpenGL_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5OpenGL
+Qt5Test_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5Test
+Qt5Widgets_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5Widgets
+Qt5_DIR:PATH=C:/Qt/Qt5.14.1/5.14.1/msvc2017_64/lib/cmake/Qt5
+Qt6_DIR:PATH=Qt6_DIR-NOTFOUND
+Tesseract_DIR:PATH=Tesseract_DIR-NOTFOUND
+Tesseract_INCLUDE_DIR:PATH=Tesseract_INCLUDE_DIR-NOTFOUND
+Tesseract_LIBRARY:FILEPATH=Tesseract_LIBRARY-NOTFOUND
+USE_WIN32_FILEIO:BOOL=TRUE
+VIDEOIO_ENABLE_PLUGINS:BOOL=ON
+VIDEOIO_PLUGIN_LIST:STRING=
+VPL_DIR:PATH=VPL_DIR-NOTFOUND
+VTK_DIR:PATH=VTK_DIR-NOTFOUND
+WITH_1394:BOOL=ON
+WITH_ADE:BOOL=ON
+WITH_ARITH_DEC:BOOL=ON
+WITH_ARITH_ENC:BOOL=ON
+WITH_CLP:BOOL=OFF
+WITH_CUBLAS:BOOL=ON
+WITH_CUDA:BOOL=ON
+WITH_CUDNN:BOOL=ON
+WITH_CUFFT:BOOL=ON
+WITH_DIRECTX:BOOL=ON
+WITH_DSHOW:BOOL=ON
+WITH_EIGEN:BOOL=ON
+WITH_FFMPEG:BOOL=ON
+WITH_FREETYPE:BOOL=OFF
+WITH_GDAL:BOOL=OFF
+WITH_GDCM:BOOL=OFF
+WITH_GSTREAMER:BOOL=ON
+WITH_HALIDE:BOOL=OFF
+WITH_HPX:BOOL=OFF
+WITH_IMGCODEC_HDR:BOOL=ON
+WITH_IMGCODEC_PFM:BOOL=ON
+WITH_IMGCODEC_PXM:BOOL=ON
+WITH_IMGCODEC_SUNRASTER:BOOL=ON
+WITH_INF_ENGINE:BOOL=OFF
+WITH_IPP:BOOL=ON
+WITH_ITT:BOOL=ON
+WITH_JASPER:BOOL=ON
+WITH_JPEG:BOOL=ON
+WITH_LAPACK:BOOL=ON
+WITH_LIBREALSENSE:BOOL=OFF
+WITH_MATLAB:BOOL=OFF
+WITH_MFX:BOOL=ON
+WITH_MSMF:BOOL=ON
+WITH_MSMF_DXVA:BOOL=ON
+WITH_NGRAPH:BOOL=OFF
+WITH_NVCUVID:BOOL=ON
+WITH_ONNX:BOOL=OFF
+WITH_OPENCL:BOOL=ON
+WITH_OPENCLAMDBLAS:BOOL=ON
+WITH_OPENCLAMDFFT:BOOL=ON
+WITH_OPENCL_D3D11_NV:BOOL=ON
+WITH_OPENCL_SVM:BOOL=OFF
+WITH_OPENEXR:BOOL=ON
+WITH_OPENGL:BOOL=ON
+WITH_OPENJPEG:BOOL=ON
+WITH_OPENMP:BOOL=OFF
+WITH_OPENNI:BOOL=OFF
+WITH_OPENNI2:BOOL=OFF
+WITH_OPENVX:BOOL=OFF
+WITH_PLAIDML:BOOL=OFF
+WITH_PNG:BOOL=ON
+WITH_PROTOBUF:BOOL=ON
+WITH_PVAPI:BOOL=OFF
+WITH_QT:BOOL=ON
+WITH_QUIRC:BOOL=ON
+WITH_TBB:BOOL=OFF
+WITH_TESSERACT:BOOL=ON
+WITH_TIFF:BOOL=ON
+WITH_UEYE:BOOL=OFF
+WITH_VTK:BOOL=ON
+WITH_VULKAN:BOOL=OFF
+WITH_WEBNN:BOOL=OFF
+WITH_WEBP:BOOL=ON
+WITH_WIN32UI:BOOL=ON
+WITH_XIMEA:BOOL=OFF
+ccitt:BOOL=ON
+gflags_DIR:PATH=gflags_DIR-NOTFOUND
+logluv:BOOL=ON
+lzw:BOOL=ON
+mdi:BOOL=ON
+next:BOOL=ON
+old-jpeg:BOOL=OFF
+packbits:BOOL=ON
+thunder:BOOL=ON
