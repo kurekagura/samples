@@ -1,3 +1,9 @@
+# My Latest
+
+```
+mklink /d c:\lib\opencv-4.5.5 c:\lib\opencv-4.5.5a
+```
+
 # build4.5.5a
 
 ## [ Version&Environment ]
@@ -49,7 +55,28 @@ C:\VulkanSDK\1.2.198.1\Bin\vulkaninfoSDK.exe
 Build fails with WITH_GSTREAMER=ON, so the following patch was applied to solve the problem.
 
 - [videoio: added explicit gst-audio dependency for windows #21500](https://github.com/opencv/opencv/pull/21500/files)
-  "opencv\modules\videoio\cmake\detect_gstreamer.cmake"
+  `opencv\modules\videoio\cmake\detect_gstreamer.cmake`
+
+Modified `C:\sw\Python37\include\pyconfig.h` to fix the following error in the Debug build.
+
+```
+LINK : fatal error LNK1104:
+ファイル 'python37_d.lib' を開くことができません。 
+[O:\src\opencv-all\build4.5.5a\modules\python3\opencv_python3.vcxproj]
+```
+
+- [LNK1104: cannot open file 'python34_d.lib' ](https://answers.opencv.org/question/68148/lnk1104-cannot-open-file-python34_dlib/)
+- [LINK : fatal error LNK1104: cannot open file 'python37_d.lib'](https://stackoverflow.com/questions/61995649/link-fatal-error-lnk1104-cannot-open-file-python37-d-lib)
+
+```
+pragma comment(lib,"python37_d.lib")
+ =>
+pragma comment(lib,"python37.lib")
+
+#       define Py_DEBUG
+ =>
+//#       define Py_DEBUG
+```
 
 ## [ Preparation ]
 
@@ -76,8 +103,6 @@ set BUILDID=4.5.5a
 
 cmake "../opencv" ^
 -G "Visual Studio 16 2019" ^
--D CMAKE_CONFIGURATION_TYPES="Release" ^
--D CMAKE_BUILD_TYPE="Release" ^
 -D OPENCV_EXTRA_MODULES_PATH=O:/src/opencv-all/opencv_contrib/modules ^
 -D BUILD_opencv_world=ON ^
 -D BUILD_opencv_python3=ON ^
@@ -97,8 +122,10 @@ cmake "../opencv" ^
 -D WITH_MFX=ON ^
 -D WITH_GSTREAMER=ON
 
-msbuild INSTALL.vcxproj /p:Configuration=Release /target:Clean;ReBuild
-* 経過時間 01:01:24.66
+msbuild INSTALL.vcxproj /p:Configuration="debug" /target:ReBuild && ^
+msbuild INSTALL.vcxproj /p:Configuration="release" /target:ReBuild
+
+経過時間 01:08:05.39
 ```
 ```
 cmake "../opencv" -LA > build%BUILDID%-CMakeCachedVars.txt 2>&1
