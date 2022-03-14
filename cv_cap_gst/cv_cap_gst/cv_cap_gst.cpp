@@ -50,14 +50,14 @@ int main(int argc, char* argv[])
 	// QSV->d3d11h264device1dec, NVCODEC->d3d11h264dec or nvh264dec
 	// openh264dec
 	const cv::String decoderElement = "d3d11h264device1dec";
-	bool input_mp4 = false;
+	bool input_mp4 = true;
 
-	// QSV->mfh264device1enc, NVCODEC->mfh264enc or nvh264enc
-	// openh264enc
+	// QSV->mfh264device1enc, NVCODEC->mfh264enc or nvh264enc, openh264enc
 	// x264enc:.264出力はNG?
-	//３つのエンコーダはmp4に対応していない？エラー:could not link nvh264enc0 to qtmux0 が発生。
+	// x264encのみがqtmuxの入力に対応している（？）
+	// x264enc以外では「could not link nvh264enc0 to qtmux0」エラーが発生。
 	const cv::String encoderElement = "x264enc";
-	bool output_mp4 = false;
+	bool output_mp4 = true;
 
 	//To extract h264 in .mp4, need qtdemux.
 	cv::String gst_cmd_cap = cv::format("filesrc location=\"C:\\\\dev\\\\samplevideo\\\\input.%s\" %s !h264parse !%s !videoconvert !appsink",
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 	//x264は既定でyuv444pとなり、デコードできない場合がある為、yuv420p（I420）へ明示的に変換する。
 	//!videoconvert !video/x-raw,format=I420
 	cv::String conv_to_encoder = "";
-	if (encoderElement.compare("x246enc")==1) {
+	if (encoderElement.compare("x264enc")==1) {
 		conv_to_encoder = "!video/x-raw,format=I420";
 	}
 	cv::String gst_cmd_writer = cv::format("appsrc !videoconvert %s !%s %s !filesink location=\"%s\"",
@@ -120,6 +120,9 @@ int main(int argc, char* argv[])
 		if (writer.isOpened())
 			writer.write(cvmat);
 	}
+
+	if (writer.isOpened())
+		writer.release();
 
 	cv::destroyWindow(windName);
 
