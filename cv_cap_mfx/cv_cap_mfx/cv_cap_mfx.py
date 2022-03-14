@@ -1,7 +1,8 @@
 #-*- coding:utf-8 -*-
+# Encode frames obtained by decoding H.264 directly to H.264.
+# Use Intel QSV (MFX) as hardware decoder.
+# Encoder uses MSMF (Microsoft Media Foundation).
 import cv2
-#import numpy as np
-
 
 filepath = 'C:\\dev\\samplevideo\\Big_Buck_Bunny_360_10s_1MB.264'
 
