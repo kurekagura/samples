@@ -26,7 +26,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 #Already added c:/lib/opencv-4.5.5 to CMAKE_PREFIX_PATH on the Custom Kit side
-find_package(OpenCV)
+find_package(OpenCV REQUIRED)
+
+#Already added <path to vcpkg.cmake> to CMAKE_TOOLCHAIN_FILE:FILEPATH on the Custom Kit side
+#e.x)C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+find_package(spdlog REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -46,4 +50,4 @@ else()
   )
 endif()
 
-target_link_libraries(myapp PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES})
+target_link_libraries(myapp PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES} spdlog::spdlog)

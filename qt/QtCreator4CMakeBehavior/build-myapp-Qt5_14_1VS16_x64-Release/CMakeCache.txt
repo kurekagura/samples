@@ -406,11 +406,17 @@ Z_VCPKG_PWSH_PATH:FILEPATH=Z_VCPKG_PWSH_PATH-NOTFOUND
 // triplet
 _VCPKG_INSTALLED_DIR:PATH=C:/vcpkg/installed
 
+//The directory containing a CMake configuration file for fmt.
+fmt_DIR:PATH=C:/vcpkg/installed/x64-windows/share/fmt
+
 //Value Computed by CMake
 myapp_BINARY_DIR:STATIC=C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/build-myapp-Qt5_14_1VS16_x64-Release
 
 //Value Computed by CMake
 myapp_SOURCE_DIR:STATIC=C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/myapp
+
+//The directory containing a CMake configuration file for spdlog.
+spdlog_DIR:PATH=C:/vcpkg/installed/x64-windows/share/spdlog
 
 
 ########################
@@ -471,6 +477,8 @@ CMAKE_GENERATOR_INSTANCE:INTERNAL=
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
+//Have include pthread.h
+CMAKE_HAVE_PTHREAD_H:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
 CMAKE_HOME_DIRECTORY:INTERNAL=C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/myapp
@@ -644,6 +652,8 @@ CUDA_run_nvcc:INTERNAL=C:/sw/CMake/share/cmake-3.17/Modules/FindCUDA/run_nvcc.cm
 FIND_PACKAGE_MESSAGE_DETAILS_CUDA:INTERNAL=[C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5][C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/bin/nvcc.exe][C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/include][C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5/lib/x64/cudart_static.lib][v11.5(11.5)]
 //Details about finding OpenCV
 FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[C:/lib/opencv-4.5.5][v4.5.5()]
+//Details about finding Threads
+FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Install the dependencies listed in your manifest:
 //\n    If this is off, you will have to manually install your dependencies.
 //\n    See https://github.com/microsoft/vcpkg/tree/master/docs/specifications/manifests.md
