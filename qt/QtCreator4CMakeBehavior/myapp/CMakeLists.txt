@@ -25,6 +25,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+#Already added c:/lib/opencv-4.5.5 to CMAKE_PREFIX_PATH on the Custom Kit side
+find_package(OpenCV)
+
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 if(ANDROID)
   add_library(myapp SHARED
@@ -42,4 +46,4 @@ else()
   )
 endif()
 
-target_link_libraries(myapp PRIVATE Qt5::Widgets)
+target_link_libraries(myapp PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES})
