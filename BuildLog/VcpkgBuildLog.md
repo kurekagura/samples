@@ -43,18 +43,7 @@ c:\vcpkg>.\vcpkg install spdlog:x64-windows
 
 # CMake in Qt Creator
 
-CMakeLists.txt
-```
-#set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-include("C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-
-find_package(spdlog REQUIRED)
-
-# Link with spdlog(d).dll
-target_link_libraries(QMouseHoverTaskbar PRIVATE Qt5::Widgets spdlog::spdlog)
-# If you want to use it as a header-only
-#target_link_libraries(QMouseHoverTaskbar PRIVATE Qt5::Widgets spdlog::spdlog_header_only)
-```
+Create a custom Kit and add CMAKE_TOOLCHAIN_FILE in CMake configuration, not in CMakeLists.txt. In CMakeLists.txt, just find_package and you will be able to find the package.
 
 # What I don't understand (for Post-learning)
 
