@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "myliba/myliba.h"
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -42,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
     cv::Mat mat = cv::imread("C:/Windows/Web/Wallpaper/Theme1/img1.jpg");
     if(mat.empty())
         return;
+
+    MyLibA myliba;
 }
 
 MainWindow::~MainWindow()

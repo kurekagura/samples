@@ -50,4 +50,5 @@ else()
   )
 endif()
 
-target_link_libraries(myapp PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES} spdlog::spdlog)
+add_subdirectory(./myliba)
+target_link_libraries(myapp PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES} spdlog::spdlog myliba)
