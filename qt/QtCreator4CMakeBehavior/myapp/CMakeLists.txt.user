@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.0, 2022-03-25T00:25:49. -->
+<!-- Written by QtCreator 4.11.0, 2022-03-27T00:04:36. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -317,8 +317,10 @@
      <value type="int">13</value>
      <value type="int">14</value>
     </valuelist>
-    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
-    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">0</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
+     <value type="QString">PATH=C:\Qt\Qt5.14.1\5.14.1\msvc2017_64\bin;C:\lib\opencv-4.5.5a\x64\vc16\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\bin;C:\gstreamer\1.0\msvc_x86_64\bin</value>
+    </valuelist>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">myapp</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.myapp</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">myapp</value>
