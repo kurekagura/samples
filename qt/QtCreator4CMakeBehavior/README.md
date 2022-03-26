@@ -25,3 +25,43 @@ PATH=%PATH%;C:\lib\opencv-4.5.5\x64\vc16\bin
 * no need to "set"
 ```
 
+# Copy dll to the same folder as exe
+
+Use add_custom_command in CMakeLists.txt
+```
+
+add_custom_command(TARGET myapp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "$<TARGET_FILE:myliba>"    #src
+    "$<TARGET_FILE_DIR:myapp>"    #dst
+    )
+```
+generates the following script in myapp.vcxproj as PostBuildEvent.
+```
+setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/build/Debug/myapp.exe -installedDir C:/vcpkg/installed/x64-windows/debug/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+C:\sw\CMake\bin\cmake.exe -E copy_if_different C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/build/myliba/Debug/myliba.dll C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/build/Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+```
+
+The important thing is the following copy command.
+```
+C:\sw\CMake\bin\cmake.exe -E copy_if_different 
+ C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/build/myliba/Debug/myliba.dll
+ C:/dev/kurekagura/samples/qt/QtCreator4CMakeBehavior/build/Debug
+```
+

@@ -52,3 +52,13 @@ endif()
 
 add_subdirectory(./myliba)
 target_link_libraries(myapp PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES} spdlog::spdlog myliba)
+
+# Copy dll to exe folder
+add_custom_command(TARGET myapp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "$<TARGET_FILE:myliba>"    #src
+    "$<TARGET_FILE_DIR:myapp>"    #dst
+    )
+
+#message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
+
