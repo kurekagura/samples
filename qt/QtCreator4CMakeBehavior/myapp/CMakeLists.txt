@@ -60,5 +60,11 @@ add_custom_command(TARGET myapp POST_BUILD
     "$<TARGET_FILE_DIR:myapp>"    #dst
     )
 
+if(WIN32)
+    set_target_properties(myapp
+        PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=%PATH%;${OpenCV_DIR}/x64/vc16/bin"
+    )
+endif()
+
 #message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
 
