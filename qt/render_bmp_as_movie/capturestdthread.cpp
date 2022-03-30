@@ -50,10 +50,12 @@ void CaptureStdThread::thread_func()
         std::string filePath = filePathVec[i];
         cv::Mat mat = cv::imread(filePath);
         emit Signal_RenderImage(mat);
-        std::this_thread::sleep_for(std::chrono::microseconds(10));
+        std::this_thread::sleep_for(std::chrono::microseconds(5));
         i++;
         if(i > max)
             i = 0;
+
+        std::this_thread::sleep_for(std::chrono::nanoseconds(200));
     }
 
 //    QDir dir("C:/dev/samplevideo/out-avframe2mat");

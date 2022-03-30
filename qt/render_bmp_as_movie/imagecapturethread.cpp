@@ -60,6 +60,9 @@ void ImageCaptureThread::func_thread()
         i++;
         if(i > max)
             i = 0;
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+        //TODO:ImageProcessorThread側より高速に回すと例外になる。
+        //FPSに影響する
+        std::this_thread::sleep_for(std::chrono::nanoseconds(20000));
     }
 }

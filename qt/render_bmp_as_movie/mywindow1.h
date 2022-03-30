@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QThread>
-
+#include <spdlog/stopwatch.h>
 #include <opencv2/opencv.hpp>
 #include "captureqthread.h"
 
@@ -23,6 +23,8 @@ private:
     Ui::MyWindow1 *ui;
     CaptureQThread capThread_;
 
+    uint frame_count_;
+    spdlog::stopwatch* sw_;
 protected slots:
     void closeEvent(QCloseEvent *);
     void Slot_RenderImage(cv::Mat&);

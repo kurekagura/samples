@@ -2,6 +2,7 @@
 #define MYWINDOW3_H
 
 #include <QMainWindow>
+#include <spdlog/stopwatch.h>
 #include "capturestdthread.h"
 #include "imagecapturethread.h"
 #include "imageprocessorthread.h"
@@ -24,7 +25,8 @@ private:
     ImageCaptureThread* capThr_;
     ImageProcessorThread* procThr_;
     QueueChannel<cv::Mat>* qch_;
-
+    uint frame_count_;
+    spdlog::stopwatch* sw_;
 protected slots:
     void closeEvent(QCloseEvent *);
     void Slot_RenderImage(cv::Mat&);

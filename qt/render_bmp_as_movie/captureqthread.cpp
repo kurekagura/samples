@@ -8,7 +8,7 @@ CaptureQThread::CaptureQThread(){
 
 void CaptureQThread::run(){
 
-    QDir dir("C:/dev/samplevideo/out-avframe2mat");
+    QDir dir("C:/dev/samplevideo/out-avframe2mat-fhd");
     QStringList fileNameList = dir.entryList(QStringList() << "*.bmp" << "*.BMP", QDir::Files);
 
     int i = 0;
@@ -20,9 +20,13 @@ void CaptureQThread::run(){
 
         cv::Mat mat = cv::imread(filePath.toStdString());
         emit Signal_RenderImage(mat);
-        this->usleep(10);
+
         i++;
         if(i > max)
             i = 0;
+
+        //FPSに影響する
+        //10ns->FPSは150越えするが、再描画されない。
+        std::this_thread::sleep_for(std::chrono::nanoseconds(200));
     }
 }

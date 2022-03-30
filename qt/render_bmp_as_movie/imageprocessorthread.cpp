@@ -38,7 +38,10 @@ void ImageProcessorThread::func_thread()
         if(mat != nullptr){
             emit Signal_RenderImage(const_cast<cv::Mat&>(*mat));
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(8));
+        //TODO:ImageCaptureThread側より遅く回すと例外になる。
+        //FPSに影響する
+        std::this_thread::sleep_for(std::chrono::nanoseconds(20000));
+
     }
 }
 

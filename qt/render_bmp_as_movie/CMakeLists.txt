@@ -19,7 +19,7 @@ find_package(OpenCV REQUIRED)
 
 #Already added <path to vcpkg.cmake> to CMAKE_TOOLCHAIN_FILE:FILEPATH on the Custom Kit side
 #e.x)C:/vcpkg/scripts/buildsystems/vcpkg.cmake
-#find_package(spdlog REQUIRED)
+find_package(spdlog REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -50,7 +50,7 @@ add_executable(render_bmp_as_movie
     videodevicethread.cpp
 )
 
-target_link_libraries(render_bmp_as_movie PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES})
+target_link_libraries(render_bmp_as_movie PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES} spdlog::spdlog)
 
 if(WIN32)
     set_target_properties(render_bmp_as_movie

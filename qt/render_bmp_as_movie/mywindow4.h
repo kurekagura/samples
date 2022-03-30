@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <spdlog/stopwatch.h>
 #include <opencv2/opencv.hpp>
 #include "capturestdthread.h"
 #include "videodevicethread.h"
@@ -23,7 +24,8 @@ private:
     Ui::MyWindow4 *ui;
     VideoDeviceThread *videoThr_;
     QTimer* timer_;    
-
+    uint frame_count_;
+    spdlog::stopwatch* sw_;
 protected slots:
     void closeEvent(QCloseEvent *);
     void Slot_Update();

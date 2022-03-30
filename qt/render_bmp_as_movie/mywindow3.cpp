@@ -3,15 +3,18 @@
 
 #include <QtCore/QDebug>
 #include <opencv2/opencv.hpp>
+#include <spdlog/spdlog.h>
 #include "queuechannel.h"
 
 MyWindow3::MyWindow3(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow3),
     qch_(nullptr),
-    capThr_(nullptr)
+    capThr_(nullptr),
+    frame_count_(0)
 {
     ui->setupUi(this);
+    sw_ = new spdlog::stopwatch();
 
     qch_ = new QueueChannel<cv::Mat>();
 
@@ -19,9 +22,7 @@ MyWindow3::MyWindow3(QWidget *parent) :
     capThr_->start();
 
     procThr_ = new ImageProcessorThread(qch_, this);
-
     connect(procThr_, SIGNAL(Signal_RenderImage(cv::Mat&)), this, SLOT(Slot_RenderImage(cv::Mat&)), Qt::QueuedConnection);
-
     procThr_->start();
 }
 
@@ -33,6 +34,8 @@ MyWindow3::~MyWindow3()
         delete procThr_;
     if(qch_ != nullptr)
         delete qch_;
+    if(sw_ != nullptr)
+        delete sw_;
     delete ui;
 }
 
@@ -46,7 +49,8 @@ void MyWindow3::closeEvent(QCloseEvent *event)
 }
 
 void MyWindow3::Slot_RenderImage(cv::Mat& mat){
-    qDebug() << "MyWindow3::Slot_RenderImage:";
+    if(frame_count_ == 0)
+        sw_->reset();
 
     cv::Mat mat_dst;
     cv::cvtColor(mat, mat_dst, cv::COLOR_BGR2RGB);
@@ -55,4 +59,12 @@ void MyWindow3::Slot_RenderImage(cv::Mat& mat){
 
     QPixmap qpix = QPixmap::fromImage(qimg);
     ui->imageLabel->setPixmap(qpix);
+
+    frame_count_++;
+    if(frame_count_ == 240){
+        double sec = sw_->elapsed().count();
+        double fps = 240.0 / sec;
+        spdlog::info("elapsed={} fps={:.0f}", sec, fps);
+        frame_count_ = 0;
+    }
 }

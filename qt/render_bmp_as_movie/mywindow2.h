@@ -2,6 +2,7 @@
 #define MYWINDOW2_H
 
 #include <QMainWindow>
+#include <spdlog/stopwatch.h>
 #include "capturestdthread.h"
 
 namespace Ui {
@@ -19,7 +20,8 @@ public:
 private:
     Ui::MyWindow2 *ui;
     CaptureStdThread *capStdThr_;
-
+    uint frame_count_;
+    spdlog::stopwatch* sw_;
 protected slots:
     void closeEvent(QCloseEvent *);
     void Slot_RenderImage(cv::Mat&);
