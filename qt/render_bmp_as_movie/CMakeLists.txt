@@ -24,6 +24,8 @@ find_package(spdlog REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(render_bmp_as_movie
+    myutilities.h
+    myutilities.cpp
     mywindow1.ui
     mywindow2.ui
     mywindow3.ui

@@ -1,6 +1,7 @@
 #ifndef CAPTURESTDTHREAD_H
 #define CAPTURESTDTHREAD_H
 
+#include <vector>
 #include <QObject>
 #include <opencv2/opencv.hpp>
 
@@ -15,6 +16,7 @@ public:
     void waitForFinished();
 
 private:
+    std::vector<cv::Mat> pseudo_device_;
     std::thread th_;
     bool thread_stop_requested_;
     void thread_func();

@@ -1,28 +1,16 @@
 //Qt非依存としたい
 #include "imagecapturethread.h"
+#include "myutilities.h"
 #include <iostream>
 #include <vector>
 #include <string>
-#include <filesystem> //c++17
 #include <opencv2/opencv.hpp>
 
 ImageCaptureThread::ImageCaptureThread(QueueChannel<cv::Mat>* qch)
     :qch_(qch)
 {
     //映像入力デバイスを想定，ダミーでオンメモリ（pseudo_device_）に取り込んでおく．
-    // 連番画像ファイルの一覧取得・ソート
-    const char* input_file_dir = "C:\\\\dev\\\\samplevideo\\\\out-avframe2mat-fhd";
-    std::vector<std::string> filePathVec;
-    for (const auto& entry : std::filesystem::directory_iterator(input_file_dir))
-        filePathVec.push_back(entry.path().string());
-
-    sort(filePathVec.begin(), filePathVec.end(), [](std::string& s1, std::string& s2) { return s1 < s2; });
-
-    // 連番画像ファイルをMatに読み込む
-    for (const auto& afile : filePathVec) {
-        cv::Mat mat = cv::imread(afile);
-        pseudo_device_.push_back(mat);
-    }
+    pseudo_device_ = my_load_images();
 }
 
 void ImageCaptureThread::start()
@@ -63,6 +51,7 @@ void ImageCaptureThread::func_thread()
 
         //TODO:ImageProcessorThread側より高速に回すと例外になる。
         //FPSに影響する
-        std::this_thread::sleep_for(std::chrono::nanoseconds(20000));
+        //std::this_thread::sleep_for(std::chrono::nanoseconds(30000));
+        std::this_thread::sleep_for(std::chrono::microseconds(30));
     }
 }

@@ -1,32 +1,28 @@
 #include "captureqthread.h"
+#include "myutilities.h"
 #include <QDir>
 #include <QtCore/QDebug>
 #include <opencv2/opencv.hpp>
 
 CaptureQThread::CaptureQThread(){
+    //映像入力デバイスを想定，ダミーでオンメモリ（pseudo_device_）に取り込んでおく．
+    pseudo_device_ = my_load_images();
 }
 
 void CaptureQThread::run(){
 
-    QDir dir("C:/dev/samplevideo/out-avframe2mat-fhd");
-    QStringList fileNameList = dir.entryList(QStringList() << "*.bmp" << "*.BMP", QDir::Files);
-
     int i = 0;
-    int max = fileNameList.size() - 1;
+    int max = pseudo_device_.size() - 1;
     while(true)
     {
-        QString fileName = fileNameList[i];
-        QString filePath = QDir::cleanPath(dir.path() + QDir::separator() + fileName);
-
-        cv::Mat mat = cv::imread(filePath.toStdString());
-        emit Signal_RenderImage(mat);
+        emit Signal_RenderImage(pseudo_device_[i]);
 
         i++;
         if(i > max)
             i = 0;
 
         //FPSに影響する
-        //10ns->FPSは150越えするが、再描画されない。
-        std::this_thread::sleep_for(std::chrono::nanoseconds(200));
+        //<3usecだとFPSは150越えするが、再描画されない。
+        std::this_thread::sleep_for(std::chrono::microseconds(3));
     }
 }

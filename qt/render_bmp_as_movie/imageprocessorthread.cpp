@@ -40,8 +40,8 @@ void ImageProcessorThread::func_thread()
         }
         //TODO:ImageCaptureThread側より遅く回すと例外になる。
         //FPSに影響する
-        std::this_thread::sleep_for(std::chrono::nanoseconds(20000));
-
+        //std::this_thread::sleep_for(std::chrono::nanoseconds(20000));
+        std::this_thread::sleep_for(std::chrono::microseconds(10));
     }
 }
 
