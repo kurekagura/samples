@@ -1,7 +1,8 @@
-﻿#include "videodevicethread.h"
-#include <filesystem>
+﻿#include <filesystem>
 #include <memory>
 #include <Windows.h>
+#include "videodevicethread.h"
+#include "myutilities.h"
 
 VideoDeviceThread::~VideoDeviceThread(){
     if(pseudo_device_ != nullptr)
@@ -15,52 +16,30 @@ VideoDeviceThread::~VideoDeviceThread(){
 VideoDeviceThread::VideoDeviceThread()
     :pseudo_device_(nullptr)
     ,pseudo_device_max_(0)
-    ,thread_stop_requested_(false)
-    ,is_dirty_(true)
     //,curr_doublebuff_(nullptr)
     ,doublebuff_{nullptr, nullptr}
+    ,thread_stop_requested_(false)
+    ,is_dirty_(true)
     //,curr_doublebuff_(doublebuff_[0])
 {
-    // 連番画像ファイルの一覧取得・ソート
-    const char* input_file_dir = "C:\\\\dev\\\\samplevideo\\\\out-avframe2mat-fhd";
-    std::vector<std::string> filePathVec;
-    for (const auto& entry : std::filesystem::directory_iterator(input_file_dir))
-        filePathVec.push_back(entry.path().string());
-
-    sort(filePathVec.begin(), filePathVec.end(), [](std::string& s1, std::string& s2) { return s1 < s2; });
-
-    if(filePathVec.size() < 1)
-        throw "最低でも１ファイルは必要です。";
-
-    cv::Mat firstMat = cv::imread(filePathVec[0]);
-    width_ = firstMat.cols;
-    height_ = firstMat.rows;
-    channels_ = firstMat.channels();
-    step_ = static_cast<int>(firstMat.step);
-    pseudo_device_max_ = filePathVec.size();
-    size_t size_bitmap = width_ * height_ * channels_;
-    size_t size_bitmap_buff = size_bitmap * pseudo_device_max_;
-
-    pseudo_device_ = (uchar*)malloc(sizeof(uchar) * size_bitmap_buff);
-
-    // 連番画像ファイルをMatに読み込み、画素データのみをuchar一次元配列にコピーしておく。
-    uchar* ptr = pseudo_device_;
-    for (int i=0; i < pseudo_device_max_; i++) {
-        cv::Mat mat = cv::imread(filePathVec[i]);
-        //pseudo_device_.push_back();
-        if(mat.isContinuous()){
-            memcpy(ptr, mat.data, size_bitmap);
-            ptr += size_bitmap;
-        }else{
-            throw "連続配置でなければなりません。";
-        }
+    if (!QueryPerformanceFrequency(&query_perf_freq_)) {
+        throw "QueryPerformanceFrequency NOT supported.";
     }
 
-    //doublebuff_の先頭8バイトにはタイムスタンプを入れる
+    pseudo_device_ = my_load_images_as_uchar2x2(&pseudo_device_max_, &width_, &height_, &channels_, false);
+    size_t size_bitmap = width_ * height_  * channels_;
+
+    //doublebuff_の先頭8バイトには配信時にタイムスタンプを入れる
     size_t size_timestamp = sizeof(LARGE_INTEGER); //=8
     size_t size_row = size_timestamp + size_bitmap;
     doublebuff_[0] = (uchar*)malloc(sizeof(uchar) * size_row);
     doublebuff_[1] = (uchar*)malloc(sizeof(uchar) * size_row);
+}
+
+void VideoDeviceThread::getCaptureSize(int* width, int* height)
+{
+    *width = width_;
+    *height = height_;
 }
 
 void VideoDeviceThread::start()
@@ -119,6 +98,24 @@ void VideoDeviceThread::func_thread()
     }
 }
 
+uchar* VideoDeviceThread::get_image(int* width, int* height, int* step, LARGE_INTEGER** timestamp)
+{
+    *width = width_;
+    *height = height_;
+    *step = step_;
+
+    std::unique_lock<std::mutex> lock(mtx_);
+    cond_.wait(lock, [this] {return !is_dirty_; });
+    //swap
+    uchar* tmp = doublebuff_[0];
+    doublebuff_[0] = doublebuff_[1];
+    doublebuff_[1] = tmp;
+    is_dirty_ = true;
+    *timestamp = reinterpret_cast<LARGE_INTEGER*>(doublebuff_[1]);
+    return doublebuff_[1];
+    //デストラクタでロック解除
+}
+
 uchar* VideoDeviceThread::get_image(int* width, int* height, int* step)
 {
     *width = width_;
@@ -134,5 +131,9 @@ uchar* VideoDeviceThread::get_image(int* width, int* height, int* step)
     is_dirty_ = true;
     return doublebuff_[1];
     //デストラクタでロック解除
+}
+
+double VideoDeviceThread::convert_queryperformancecounter_to_msec(const LARGE_INTEGER* qpc) {
+    return ((double)qpc->QuadPart / (double)query_perf_freq_.QuadPart);
 }
 

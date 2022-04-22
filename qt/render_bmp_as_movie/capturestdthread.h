@@ -9,11 +9,12 @@ class CaptureStdThread : public QObject
 {
     Q_OBJECT
 public:
-    explicit CaptureStdThread(QObject *parent = nullptr);
+    explicit CaptureStdThread(bool useRGB = false, QObject *parent = nullptr);
     virtual ~CaptureStdThread();
     void start();
     void stop();
     void waitForFinished();
+    void getCaptureSize(int* width, int* height);
 
 private:
     std::vector<cv::Mat> pseudo_device_;

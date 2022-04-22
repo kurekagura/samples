@@ -6,11 +6,12 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-ImageCaptureThread::ImageCaptureThread(QueueChannel<cv::Mat>* qch)
-    :qch_(qch)
+ImageCaptureThread::ImageCaptureThread(QueueChannel<cv::Mat>* qch, bool toRGB, QObject *parent)
+    : QObject(parent),
+      qch_(qch)
 {
     //映像入力デバイスを想定，ダミーでオンメモリ（pseudo_device_）に取り込んでおく．
-    pseudo_device_ = my_load_images();
+    pseudo_device_ = my_load_images(toRGB);
 }
 
 void ImageCaptureThread::start()
@@ -32,6 +33,11 @@ void ImageCaptureThread::waitForFinished()
         this->th_.join();
 }
 
+void ImageCaptureThread::getCaptureSize(int* width, int* height){
+    *width = pseudo_device_[0].cols;
+    *height = pseudo_device_[0].rows;
+}
+
 void ImageCaptureThread::func_thread()
 {
     //pseudo_device_からQueueへの投入
@@ -42,8 +48,10 @@ void ImageCaptureThread::func_thread()
         if(thread_stop_requested_)
             break;
 
-        cv::Mat mat = pseudo_device_[i].clone();
-        qch_->push(&mat);
+        const cv::Mat mat = pseudo_device_[i].clone();
+        //mat.addref();
+        //qch_->push(&mat);
+        qch_->push(mat);
 
         i++;
         if(i > max)
@@ -51,7 +59,7 @@ void ImageCaptureThread::func_thread()
 
         //TODO:ImageProcessorThread側より高速に回すと例外になる。
         //FPSに影響する
-        //std::this_thread::sleep_for(std::chrono::nanoseconds(30000));
-        std::this_thread::sleep_for(std::chrono::microseconds(30));
+        std::this_thread::sleep_for(std::chrono::nanoseconds(30000));
+        //std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }

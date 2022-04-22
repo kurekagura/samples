@@ -9,8 +9,9 @@ class CaptureQThread : public QThread
 {
     Q_OBJECT
 public:
-    CaptureQThread();
+    CaptureQThread(bool useRGB = false);
     void run();
+    void getCaptureSize(int* width, int* height);
 private:
     std::vector<cv::Mat> pseudo_device_;
 

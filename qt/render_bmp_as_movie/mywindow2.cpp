@@ -1,26 +1,51 @@
 #include "mywindow2.h"
 #include "ui_mywindow2.h"
-#include <QtCore/QDebug>
 #include <spdlog/spdlog.h>
 
-MyWindow2::MyWindow2(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MyWindow2),
-    frame_count_(0)
+MyWindow2::MyWindow2(bool useOpenGL, QWidget *parent)
+    : QMainWindow(parent),
+      ui(new Ui::MyWindow2),
+      frame_count_(0),
+      useOpenGL_(useOpenGL),
+      glPlayWidget_(nullptr),
+      imageLabel_(nullptr)
 {
     ui->setupUi(this);
     sw_= new spdlog::stopwatch();
-    capStdThr_ = new CaptureStdThread(this);
-    connect(capStdThr_, SIGNAL(Signal_RenderImage(cv::Mat&)), this, SLOT(Slot_RenderImage(cv::Mat&)), Qt::QueuedConnection);
+
+    //OpenGL support BGR, so no convert.
+    capStdThr_ = std::make_unique<CaptureStdThread>(!useOpenGL, this);
+    int width, height;
+    capStdThr_->getCaptureSize(&width, &height);
+
+    if(useOpenGL_)
+    {
+        this->setWindowTitle(this->windowTitle() + " using OpenGL");
+        glPlayWidget_ = new GLPlayWidget(ui->centralwidget);
+        glPlayWidget_->setFixedSize(width, height);
+        ui->verticalLayout->addWidget(glPlayWidget_);
+    }else{
+        this->setWindowTitle(this->windowTitle() + " using QLabel");
+        imageLabel_ = new QLabel(ui->centralwidget);
+        ui->verticalLayout->addWidget(imageLabel_);
+    }
+
+    connect(capStdThr_.get(), SIGNAL(Signal_RenderImage(cv::Mat&)), this, SLOT(Slot_RenderImage(cv::Mat&)), Qt::QueuedConnection);
     capStdThr_->start();
 }
 
 MyWindow2::~MyWindow2()
 {
-    if(capStdThr_ != nullptr)
-        delete capStdThr_;
     if(sw_ != nullptr)
         delete sw_;
+    if(glPlayWidget_ != nullptr){
+        ui->verticalLayout->removeWidget(glPlayWidget_);
+        delete glPlayWidget_;
+    }
+    if(imageLabel_ != nullptr){
+        ui->verticalLayout->removeWidget(imageLabel_);
+        delete imageLabel_;
+    }
     delete ui;
 }
 
@@ -35,19 +60,21 @@ void MyWindow2::Slot_RenderImage(cv::Mat& mat)
     if(frame_count_ == 0)
         sw_->reset();
 
-    cv::Mat mat_dst;
-    cv::cvtColor(mat, mat_dst, cv::COLOR_BGR2RGB);
-
-    QImage qimg(mat_dst.data, mat_dst.cols, mat_dst.rows, static_cast<int>(mat_dst.step), QImage::Format_RGB888);
-
-    QPixmap qpix = QPixmap::fromImage(qimg);
-    ui->imageLabel->setPixmap(qpix);
+    if(useOpenGL_){
+        QImage qimg_bgr(mat.data, mat.cols, mat.rows, static_cast<int>(mat.step), QImage::Format_BGR888);
+        glPlayWidget_->setTexture(qimg_bgr);
+    }else{
+        //Processing as BGR does not result in an error, but the operation is abnormally slow and hangs up.
+        QImage qimg_rgb(mat.data, mat.cols, mat.rows, static_cast<int>(mat.step), QImage::Format_RGB888);
+        QPixmap qpix_rgb = QPixmap::fromImage(qimg_rgb);
+        imageLabel_->setPixmap(qpix_rgb);
+    }
 
     frame_count_++;
     if(frame_count_ == 240){
         double sec = sw_->elapsed().count();
         double fps = 240.0 / sec;
-        spdlog::info("elapsed={} fps={:.0f}", sec, fps);
+        spdlog::info("MyWindow2: elapsed={} fps={:.0f}", sec, fps);
         frame_count_ = 0;
     }
 }

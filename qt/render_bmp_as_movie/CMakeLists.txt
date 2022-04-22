@@ -30,6 +30,7 @@ add_executable(render_bmp_as_movie
     mywindow2.ui
     mywindow3.ui
     mywindow4.ui
+#    mywindow5.ui
     captureqthread.h
     capturestdthread.h
     imagecapturethread.h
@@ -38,6 +39,7 @@ add_executable(render_bmp_as_movie
     mywindow2.h
     mywindow3.h
     mywindow4.h
+#    mywindow5.h
     queuechannel.h
     videodevicethread.h
     captureqthread.cpp
@@ -49,7 +51,12 @@ add_executable(render_bmp_as_movie
     mywindow2.cpp
     mywindow3.cpp
     mywindow4.cpp
+#    mywindow5.cpp
     videodevicethread.cpp
+    glplaywidget.h
+    glplaywidget.cpp
+#    glplaywidget2.h
+#    glplaywidget2.cpp
 )
 
 target_link_libraries(render_bmp_as_movie PRIVATE Qt5::Widgets ${OpenCV_LIBRARIES} spdlog::spdlog)

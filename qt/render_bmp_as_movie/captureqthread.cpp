@@ -1,12 +1,16 @@
+#include <opencv2/opencv.hpp>
 #include "captureqthread.h"
 #include "myutilities.h"
-#include <QDir>
-#include <QtCore/QDebug>
-#include <opencv2/opencv.hpp>
 
-CaptureQThread::CaptureQThread(){
-    //映像入力デバイスを想定，ダミーでオンメモリ（pseudo_device_）に取り込んでおく．
-    pseudo_device_ = my_load_images();
+CaptureQThread::CaptureQThread(bool useRGB){
+    // Assume a video input device and dummy images into on-memory (pseudo_device_).
+    pseudo_device_ = my_load_images(useRGB);
+}
+
+void CaptureQThread::getCaptureSize(int* width, int* height)
+{
+    *width = pseudo_device_[0].cols;
+    *height = pseudo_device_[0].rows;
 }
 
 void CaptureQThread::run(){
@@ -21,8 +25,8 @@ void CaptureQThread::run(){
         if(i > max)
             i = 0;
 
-        //FPSに影響する
-        //<3usecだとFPSは150越えするが、再描画されない。
-        std::this_thread::sleep_for(std::chrono::microseconds(3));
+        //std::this_thread::sleep_for(std::chrono::microseconds(3));
+        //It will be 280 fps at 4K. If 200<=, the drawing will be wrong.
+        std::this_thread::sleep_for(std::chrono::nanoseconds(201));
     }
 }

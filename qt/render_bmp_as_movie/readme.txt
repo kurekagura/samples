@@ -20,5 +20,18 @@ MyWindowのgeometryを100*100など、表示画像より小さく設定してお
 Label(QLabel)を配置、objectNameをimageLabelへ、scaledContentsをONへ変更する。
 centralwidgetのレイアウトを「垂直に並べる」（横棒アイコン）へ変更する。
 
-centralwidgetのsizePolicyを[Expanding,Expanding,0,0]とする。
-MyWindowとimageLabelのsizePolicyを[Preferred,Preferred,0,0]へ設定したいのだが、
+Build Instruction
+
+1. CMakeLists.txtをQt Creator(IDE)で開く
+2. OpenCV_DIR(e.x,,c:/lib/opencv-4.5.5)を追加。
+　CMakeCache変数。.userに保存される。
+3. TOOLCHAIN
+
+
+実行時の環境変数
+　→「ビルド時の環境変数」から「環境変数なし」へ変更
+　→PATH環境変数が例えば以下のようになるよう変更
+
+C:\Qt\Qt5.14.1\5.14.1\msvc2017_64\bin;C:\lib\opencv-4.5.5a\x64\vc16\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\bin;C:\gstreamer\1.0\msvc_x86_64\bin
+
+※Qtのパスは既定で存在する。

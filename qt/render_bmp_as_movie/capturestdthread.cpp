@@ -3,15 +3,21 @@
 #include <chrono>
 #include <thread>
 
-CaptureStdThread::CaptureStdThread(QObject *parent)
+CaptureStdThread::CaptureStdThread(bool useRGB, QObject *parent)
     : QObject(parent), thread_stop_requested_(true)
 {
-    //映像入力デバイスを想定，ダミーでオンメモリ（pseudo_device_）に取り込んでおく．
-    pseudo_device_ = my_load_images();
+    // Assume a video input device and dummy images into on-memory (pseudo_device_).
+    pseudo_device_ = my_load_images(useRGB);
 }
 
 CaptureStdThread::~CaptureStdThread()
 {
+}
+
+void CaptureStdThread::getCaptureSize(int* width, int* height)
+{
+    *width = pseudo_device_[0].cols;
+    *height = pseudo_device_[0].rows;
 }
 
 void CaptureStdThread::start()
@@ -41,11 +47,13 @@ void CaptureStdThread::thread_func()
             break;
 
         emit Signal_RenderImage(pseudo_device_[i]);
-        std::this_thread::sleep_for(std::chrono::microseconds(5));
         i++;
         if(i > max)
             i = 0;
 
-        std::this_thread::sleep_for(std::chrono::nanoseconds(200));
+        //std::this_thread::sleep_for(std::chrono::microseconds(1));
+        //std::this_thread::sleep_for(std::chrono::nanoseconds(1000));
+        //It will be 300 fps at 4K. If 200<=, the drawing will be wrong.
+        std::this_thread::sleep_for(std::chrono::nanoseconds(201));
     }
 }

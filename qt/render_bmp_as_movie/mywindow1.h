@@ -1,6 +1,7 @@
 #ifndef MYWINDOW1_H
 #define MYWINDOW1_H
 
+#include <memory>
 #include <QMainWindow>
 #include <QThread>
 #include <spdlog/stopwatch.h>
@@ -16,15 +17,16 @@ class MyWindow1 : public QMainWindow
     Q_OBJECT
 
 public:
-    MyWindow1(QWidget *parent = nullptr);
+    MyWindow1(bool useOpenGL, QWidget *parent = nullptr);
     ~MyWindow1();
 
 private:
+    bool useOpenGL_;
     Ui::MyWindow1 *ui;
-    CaptureQThread capThread_;
-
+    std::unique_ptr<CaptureQThread> capThread_;
     uint frame_count_;
     spdlog::stopwatch* sw_;
+
 protected slots:
     void closeEvent(QCloseEvent *);
     void Slot_RenderImage(cv::Mat&);
