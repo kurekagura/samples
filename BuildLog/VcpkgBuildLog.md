@@ -39,6 +39,7 @@ Vcpkg package management program version
 # Usage to install a package
 ```
 c:\vcpkg>.\vcpkg install spdlog:x64-windows
+c:\vcpkg>.\vcpkg install ffmpeg:x64-windows
 ```
 
 # CMake in Qt Creator
