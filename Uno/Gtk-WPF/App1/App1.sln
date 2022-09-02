@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "App1.Shared", "App1.Shared\App1.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{F57589DE-C3AD-44F8-B11B-E43C93E2CB5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App1.Skia.Gtk", "App1.Skia.Gtk\App1.Skia.Gtk.csproj", "{345D749D-7A27-458C-B5BC-A862979513CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App1.Skia.Wpf", "App1.Skia.Wpf\App1.Skia.Wpf.csproj", "{9C2C9B42-AEFD-489E-B83E-382DCC273519}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{345D749D-7A27-458C-B5BC-A862979513CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{345D749D-7A27-458C-B5BC-A862979513CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{345D749D-7A27-458C-B5BC-A862979513CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{345D749D-7A27-458C-B5BC-A862979513CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C2C9B42-AEFD-489E-B83E-382DCC273519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2C9B42-AEFD-489E-B83E-382DCC273519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2C9B42-AEFD-489E-B83E-382DCC273519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2C9B42-AEFD-489E-B83E-382DCC273519}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{345D749D-7A27-458C-B5BC-A862979513CE} = {F57589DE-C3AD-44F8-B11B-E43C93E2CB5B}
+		{9C2C9B42-AEFD-489E-B83E-382DCC273519} = {F57589DE-C3AD-44F8-B11B-E43C93E2CB5B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D8940B2-5C1F-4732-86AF-D65F4701E409}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		App1.Shared\App1.Shared.projitems*{345d749d-7a27-458c-b5bc-a862979513ce}*SharedItemsImports = 5
+		App1.Shared\App1.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		App1.Shared\App1.Shared.projitems*{9c2c9b42-aefd-489e-b83e-382dcc273519}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "App1.Skia.Gtk": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": "Ubuntu-22.04",
+      "environmentVariables": {
+        "DISPLAY": "xxx.xxx.xxx.xxx:0"
+      }
+    }
+  }
+}
