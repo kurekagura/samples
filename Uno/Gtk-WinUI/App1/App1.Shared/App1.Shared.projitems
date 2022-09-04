@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UpdatePage.xaml.cs">
       <DependentUpon>UpdatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)AddPage.xaml">

@@ -14,15 +14,14 @@ namespace App1
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var selectedProduct = (Product)e.Parameter;
-            //tbProductName.DataContext = selectedProduct;
-            spProduct.DataContext = selectedProduct;
+            grProduct.DataContext = selectedProduct;
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var selectedProduct = (Product)spProduct.DataContext;
+                var selectedProduct = (Product)grProduct.DataContext;
 
                 using (var dbctx = new DatabaseContext(App.DB_FILE_PATH))
                 {
@@ -35,6 +34,17 @@ namespace App1
             catch
             {
 
+            }
+        }
+
+        async private void Picker_Click(object sender, RoutedEventArgs e)
+        {
+            var path = await Util.PickSingleFileAsync();
+            if(!string.IsNullOrEmpty(path))
+            {
+                //var selectedProduct = (Product)spProduct.DataContext;
+                //selectedProduct.MediaPath = path;
+                tbMediaPath.Text = path;
             }
         }
 

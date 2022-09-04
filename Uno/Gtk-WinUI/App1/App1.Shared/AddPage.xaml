@@ -14,10 +14,19 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
     </Page.Resources>
-    
+
     <Grid>
         <StackPanel Margin="10">
-            <TextBox x:Name="tbProductName"></TextBox>
+            <Grid BorderBrush="Red" BorderThickness="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="tbProductName" Grid.Column="0"/>
+                <TextBlock x:Name="tbMediaPath" Grid.Column="1"/>
+                <Button Content="Picker" Grid.Column="2" Click="Picker_Click"/>
+            </Grid>
             <Button x:Name="AddButton"
                     FontSize="20"
                     Content="Add"

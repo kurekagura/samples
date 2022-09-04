@@ -27,19 +27,22 @@ namespace App1
 
         }
 
-        public Product(string name)
+        public Product(string name, string mediaPath)
         {
             Name = name;
+            MediaPath = mediaPath;
         }
 
-        public Product(int id, string name)
+        public Product(int id, string name, string mediaPath)
         {
             Id = id;
             Name = name;
+            MediaPath = mediaPath;
         }
 
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
+        public string MediaPath { get; set; } //TODO:Tooltip
     }
 }

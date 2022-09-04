@@ -18,7 +18,12 @@ namespace App1
             Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
             "App1Sqlite.db");
 
-        private Window _window;
+        private static Window _window;
+
+        /// <summary>
+        /// https://docs.microsoft.com/ja-jp/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/winui3
+        /// </summary>
+        public static Window Window { get { return _window; } }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
