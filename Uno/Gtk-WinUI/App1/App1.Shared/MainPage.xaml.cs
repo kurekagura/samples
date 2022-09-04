@@ -1,30 +1,61 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace App1
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         public MainPage()
         {
             this.InitializeComponent();
+            updateViewFromDb();
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(AddPage));
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedProduct = this.lvProducts.SelectedItem as Product;
+            if (selectedProduct != null)
+            {
+                this.Frame.Navigate(typeof(UpdatePage), selectedProduct);
+            }
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var selectedProduct = this.lvProducts.SelectedItem as Product;
+                if (selectedProduct != null)
+                {
+                    using (var db = new DatabaseContext(App.DB_FILE_PATH))
+                    {
+                        db.Products.Remove(selectedProduct);
+                        db.SaveChanges();
+                    }
+                    updateViewFromDb();
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void updateViewFromDb()
+        {
+            using (var dbctx = new DatabaseContext(App.DB_FILE_PATH))
+            {
+                dbctx.Database.EnsureCreated();
+                var data = dbctx.Products.ToList();
+
+                lvProducts.ItemsSource = data;
+            }
         }
     }
 }

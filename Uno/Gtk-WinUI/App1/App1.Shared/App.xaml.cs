@@ -13,6 +13,11 @@ namespace App1
     /// </summary>
     public sealed partial class App : Application
     {
+
+        public static string DB_FILE_PATH = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "App1Sqlite.db");
+
         private Window _window;
 
         /// <summary>

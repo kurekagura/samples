@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="App1.MainPage"
+    x:Class="App1.AddPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:App1"
@@ -14,32 +14,18 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
     </Page.Resources>
-
+    
     <Grid>
-        <StackPanel Margin="5">
-            <ListView Height="100" x:Name="lvProducts"
-                      >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Id}" FontSize="20" Margin="0,0,20,0"/>
-                            <TextBlock Text="{Binding Name}" FontSize="20"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+        <StackPanel Margin="10">
+            <TextBox x:Name="tbProductName"></TextBox>
             <Button x:Name="AddButton"
                     FontSize="20"
                     Content="Add"
                     Click="AddButton_Click"/>
-            <Button x:Name="UpdateButton"
+            <Button x:Name="Close"
                     FontSize="20"
-                    Content="Update"
-                    Click="UpdateButton_Click"/>
-            <Button x:Name="DeleteButton"
-                    FontSize="20"
-                    Content="Delete"
-                    Click="DeleteButton_Click"/>
+                    Content="Close"
+                    Click="CloseButton_Click"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -42,3 +42,25 @@ C:\Program Files\Microsoft Visual Studio\2022\Community>wsl -l -v
   }
 }
 ```
+
+# 追加したNuget
+
+App1.Windows.csproj
+```
+"EntityFramework" Version="6.4.4"
+"Microsoft.Data.Sqlite" Version="6.0.8"
+"Microsoft.Data.Sqlite.Core" Version="6.0.8"
+"Microsoft.EntityFrameworkCore" Version="6.0.8"
+"Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8
+```
+
+App1.Skia.Gtk.csproj
+```
+"EntityFramework" Version="6.4.4"
+"Microsoft.Data.Sqlite" Version="6.0.8"
+"Microsoft.Data.Sqlite.Core" Version="6.0.8"
+"Microsoft.EntityFrameworkCore" Version="6.0.8"
+"Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8"
+```
+以下、エラーとなる為、アンインストール。
+- "Microsoft.Extensions.Logging" Version="5.0.0"
