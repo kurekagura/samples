@@ -6,9 +6,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"    
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Uno.WinUI"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.DataContext>
+        <local:ViewModel />
+    </Page.DataContext>
+
     <Grid>
-      <TextBlock Text="Hello, world!" Margin="20" FontSize="30" />
+        <lvc:CartesianChart Series="{Binding Series}">
+        </lvc:CartesianChart>
     </Grid>
+
 </Page>

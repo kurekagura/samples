@@ -45,4 +45,49 @@ C:\Program Files\Microsoft Visual Studio\2022\Community>wsl -l -v
 }
 ```
 
+# LiveCharts
+
+## LiveChartsのインストール
+
+「ソリューションのNugetパッケージの管理」から３つプロジェクトに対して `LiveChartsCore.SkiaSharpView.Uno.WinUI 2.0.0-beta.400`をNuget。
+
+GtkとWpfでビルドエラー。
+```
+重大度レベル	コード	説明	プロジェクト	ファイル	行	抑制状態
+エラー	MSB3025	ソース ファイル
+ "C:\Users\hoge\.nuget\packages\skiasharp.nativeassets.webassembly\2.88.1\build\netstandard1.0\libSkiaSharp.a" はディレクトリです。
+ "Copy" タスクはディレクトリのコピーをサポートしません。
+ 	App1.Skia.Gtk	C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets	5128	
+```
+
+WORKAROUND:
+
+GtkとWpfに対して個別に `LiveChartsCore.SkiaSharpView.Uno.WinUI 2.0.0-beta.361` へバージョンダウン。
+
+## WorkAround for Gtk
+
+WSL実行時にエラー。
+```
+InvalidOperationException:
+The version of the native libSkiaSharp library (88.0) is incompatible with this version of SkiaSharp.
+Supported versions of the native libSkiaSharp library are in the range [88.1, 89.0).
+```
+
+`SkiaSharp.NativeAssets.Linux 2.88.1` をNuget（以下の情報が表示されるので確認後にOK）。
+```
+Platforms\App1.Skia.Gtk
+更新:
+SkiaSharp.2.88.1-preview.91 -> SkiaSharp.2.88.1
+SkiaSharp.NativeAssets.Linux.2.88.1-preview.79 -> SkiaSharp.NativeAssets.Linux.2.88.1
+SkiaSharp.NativeAssets.macOS.2.88.1-preview.91 -> SkiaSharp.NativeAssets.macOS.2.88.1
+SkiaSharp.NativeAssets.Win32.2.88.1-preview.91 -> SkiaSharp.NativeAssets.Win32.2.88.1
+```
+⇒ 動作OK
+
+## WorkAround for Wpf
+
+ビルド・実行はできるがウィンドウに何も表示されない。起動したウィンドウをリサイズすると表示される。
+
 # 参考
+
+- [2022/5/12 - LiveCharts Announces Support for Uno Platform](https://platform.uno/blog/livecharts-announces-support-for-uno-platform/)
