@@ -1,14 +1,15 @@
-﻿using OpenCvSharp;
-using OpenCvSharp.WpfExtensions;
-using System;
+﻿using OpenCvSharp.WpfExtensions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using OpenCvSharp;
+using System;
 
-namespace WpfVideoCaptureUsbCam
+namespace WpfVideoCaptureFile
 {
     public partial class MainWindow : System.Windows.Window
     {
+        private string _inputFilePath = @"C:\dev\samplevideo\h264movie.mp4";
         private CancellationTokenSource _cancelTokenSource;
 
         public MainWindow()
@@ -20,11 +21,11 @@ namespace WpfVideoCaptureUsbCam
         {
             try
             {
-                using (var vcap = new VideoCapture(0))
+                using (var vcap = new VideoCapture(_inputFilePath))
                 {
                     if (!vcap.IsOpened())
                     {
-                        MessageBox.Show("USBカメラの認識に失敗しました。アプリケーションを終了します。");
+                        MessageBox.Show("ファイルを開くことが出来ませんでした。アプリケーションを終了します。");  //AnyCPUはエラーになる場合有った。
                         this.Close();
                         return;
                     }
@@ -32,9 +33,12 @@ namespace WpfVideoCaptureUsbCam
                     _cancelTokenSource = new CancellationTokenSource();
                     await Task.Run(() =>
                     {
+
+                    top:
+                        vcap.PosFrames = 0;
                         while (true)
                         {
-                            if (_cancelTokenSource.IsCancellationRequested)
+                            if (_cancelTokenSource.Token.IsCancellationRequested)
                                 break;
 
                             using (var mat = new Mat())
@@ -47,7 +51,12 @@ namespace WpfVideoCaptureUsbCam
                                     im.Source = mat.ToWriteableBitmap();
                                 });
                             }
+                            //Task.Delay(30);
+                            System.Threading.Thread.Sleep(30);
                         }
+
+                        if (!_cancelTokenSource.Token.IsCancellationRequested)
+                            goto top;
 
                     }, _cancelTokenSource.Token);
                 }
