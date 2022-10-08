@@ -97,3 +97,7 @@ conda install ffmpeg-python=0.2.0 -c conda-forge
 It reproduced it when I installed it. 
 
 In Visual Studio 2019, it works for me.
+
+# Other Links
+
+- [OpenAIがリリースした音声認識モデル”Whisper”の使い方をまとめてみた](https://dev.classmethod.jp/articles/whisper-how-to/)
