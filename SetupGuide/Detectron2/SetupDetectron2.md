@@ -61,8 +61,12 @@ conda install pycocotools=2.0.4 -c conda-forge -y
 #stable(1.13.0)
 conda install pytorch=1.13.0 pytorch-cuda=11.7 pytorch-mutex=1.0 torchaudio=0.13.0 torchvision=0.14.0 blas=1.0 -c pytorch -c nvidia -y
 
-#conda list blas -f
+#conda list blas
 #blas 1.0 mkl
+#libblas  3.9.0 8_mkl conda-forge
+#libcblas 3.9.0 8_mkl conda-forge
+#libcublas  11.11.3.6 0 nvidia
+#libcublas-dev  11.11.3.6 0 nvidia
 
 #conda list |findstr "torch"
 #pytorch  1.13.0  py3.10_cuda11.7_cudnn8_0  pytorch
