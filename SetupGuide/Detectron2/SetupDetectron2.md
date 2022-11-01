@@ -76,17 +76,24 @@ conda install pytorch=1.13.0 pytorch-cuda=11.7 pytorch-mutex=1.0 torchaudio=0.13
 #torchvision  0.14.0  pypi_0  pypi
 
 pip install opencv-python==4.6.0.66
+```
+```
+conda env export -n Detectron2 > O:\dev\kurekagura\samples\SetupGuide\Detectron2\conda_Detectron2.yml
 
+#Edit
+#  - blas=1.0=mkl
+#to
+#  - defaults::blas=1.0=mkl
+```
+
+# Install detectron2
+```
 # cd <base_dir>
 mkdir facebookresearch && cd facebookresearch
 git clone https://github.com/facebookresearch/detectron2.git
 
 set DISTUTILS_USE_SDK=1
 pip install -e detectron2
-```
-
-```
-conda env export -n Detectron2 > O:\dev\kurekagura\samples\SetupGuide\Detectron2\conda_Detectron2.yml
 ```
 
 # GPU Version Setup (use conda YAML)
@@ -102,4 +109,59 @@ conda activate Detectron2
 cd detectron2\tests
 curl -OL https://raw.githubusercontent.com/yogeshkumarpilli/detectron2/master/tests/test_window.py
 python .\test_window.py
+```
+
+# Issues
+
+## #1
+
+demo.py doesn't detect anything (on Windows, by the way).
+
+-> Uninvestigated
+```
+demo>curl -O http://images.cocodataset.org/val2017/000000439715.jpg
+demo>python demo.py --config-file ../configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml --input 000000439715.jpg
+000000439715.jpg: detected 0 instances in 0.95s
+```
+
+## #2
+
+An error occurs in the environment configured from yml. I compared 'conda list' and found to be identical.
+
+-> Unknown cause. Not resolved.
+```
+>python test_window.py
+
+Traceback (most recent call last):
+  File "O:\src\facebookresearch\detectron2\tests\test_window.py", line 29, in <module>
+    output = predictor(image)
+  File "o:\src\facebookresearch\detectron2\detectron2\engine\defaults.py", line 317, in __call__
+    predictions = self.model([inputs])[0]
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "o:\src\facebookresearch\detectron2\detectron2\modeling\meta_arch\rcnn.py", line 150, in forward
+    return self.inference(batched_inputs)
+  File "o:\src\facebookresearch\detectron2\detectron2\modeling\meta_arch\rcnn.py", line 208, in inference
+    proposals, _ = self.proposal_generator(images, features, None)
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "o:\src\facebookresearch\detectron2\detectron2\modeling\proposal_generator\rpn.py", line 477, in forward
+    proposals = self.predict_proposals(
+  File "o:\src\facebookresearch\detectron2\detectron2\modeling\proposal_generator\rpn.py", line 503, in predict_proposals
+    return find_top_rpn_proposals(
+  File "o:\src\facebookresearch\detectron2\detectron2\modeling\proposal_generator\proposal_utils.py", line 121, in find_top_rpn_proposals
+    keep = batched_nms(boxes.tensor, scores_per_img, lvl, nms_thresh)
+  File "o:\src\facebookresearch\detectron2\detectron2\layers\nms.py", line 20, in batched_nms
+    return box_ops.batched_nms(boxes.float(), scores, idxs, iou_threshold)
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torchvision\ops\boxes.py", line 75, in batched_nms
+    return _batched_nms_coordinate_trick(boxes, scores, idxs, iou_threshold)
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torch\jit\_trace.py", line 1136, in wrapper
+    return fn(*args, **kwargs)
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torchvision\ops\boxes.py", line 94, in _batched_nms_coordinate_trick
+    keep = nms(boxes_for_nms, scores, iou_threshold)
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torchvision\ops\boxes.py", line 41, in nms
+    return torch.ops.torchvision.nms(boxes, scores, iou_threshold)
+  File "o:\sw\Anaconda3\envs\Detectron2YML\lib\site-packages\torch\_ops.py", line 442, in __call__
+    return self._op(*args, **kwargs or {})
+NotImplementedError: Could not run 'torchvision::nms' with arguments from the 'CUDA' backend. This could be because the operator doesn't exist for this backend, or was omitted during the selective/custom build process (if using custom build). If you are a Facebook employee using PyTorch on mobile, please visit https://fburl.com/ptmfixes for possible resolutions. 'torchvision::nms' is only available for these backends: [CPU, QuantizedCPU, BackendSelect, Python, FuncTorchDynamicLayerBackMode, Functionalize, Named, Conjugate, Negative, ZeroTensor, ADInplaceOrView, AutogradOther, AutogradCPU, AutogradCUDA, AutogradXLA, AutogradMPS, AutogradXPU, AutogradHPU, AutogradLazy, Tracer, AutocastCPU, AutocastCUDA, FuncTorchBatched, FuncTorchVmapMode, Batched, VmapMode, FuncTorchGradWrapper, PythonTLSSnapshot, FuncTorchDynamicLayerFrontMode, PythonDispatcher].
 ```
