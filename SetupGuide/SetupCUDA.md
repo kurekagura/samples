@@ -42,3 +42,14 @@ PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v?.?\
   C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\include\cudnn_version.h:58:#define CUDNN_MINOR 4
   C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\include\cudnn_version.h:59:#define CUDNN_PATCHLEVEL 1
 ```
+
+# Trouble①
+
+v10.0（cuda_10.0.130_411.31_win10.exe）,v10.2（cuda_10.2.89_441.22_win10.exe→cuda_10.2.1_win10.exe→cuda_10.2.2_win10.exe）  
+がインストール済みの状態で、v10.1（cuda_10.1.243_426.00_win10.exe）をインストールしようとしたところ、展開後の初期画面（システム互換性のチェック）が延々と終わらない状態になり（３時間近く待ってみたが・・・）、先に進むことが出来なかった。v11.x（v11.1,v11.3,v11.5,v11.6,v11.7）もインストール済みの状態。
+
+そこで、v10.2をアンインストールした後に再度試したところ、正常にインストールできた。但し、この時もシステム互換性チェックで２時間くらい待たされた。v10.2のアンインストールが関係したかどうかは謎である。
+
+その後、v10.2を再度インストールすることができた（先述の3つのexeを順次インストール。この時は互換性のチェックは数秒で終了）。
+
+※旧バージョンはカスタムでCUDAのみをインストール。
