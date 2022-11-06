@@ -145,6 +145,34 @@ visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'], class_
 
 numpy 1.21.6以外で発生する。1.21.6以外の幾つかの他のバージョンで確認したが`正常表示されたバージョンは1.21.6`のみだった（表示のみの問題か検出が不正かは未調査）。
 
+## ValueError: Input image dtype is bool.
+
+```
+>jupyter-notebook
+# Run samples/shapes/train_shapes.ipynb
+```
+```
+lib\site-packages\skimage\_shared\utils.py in _validate_interpolation_order(image_dtype, order)
+    723     if image_dtype == bool and order != 0:
+    724         raise ValueError(
+--> 725             "Input image dtype is bool. Interpolation is not defined "
+    726              "with bool data type. Please set order to 0 or explicitely "
+    727              "cast input image to another data type.")
+
+ValueError: Input image dtype is bool. 
+Interpolation is not defined with bool data type. 
+Please set order to 0 or explicitely cast input image to another data type.
+```
+downgrade scikit-image.=> resolved.
+```
+conda list|findstr /I "scikit-image numpy"
+numpy                     1.21.6                   pypi_0    pypi
+scikit-image              0.19.3                   pypi_0    pypi
+↓
+numpy                     1.21.6                   pypi_0    pypi
+scikit-image              0.18.3                   pypi_0    pypi
+```
+
 # What is it.
 
 ## [imgaug](https://github.com/aleju/imgaug)

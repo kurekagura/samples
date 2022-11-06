@@ -3,7 +3,7 @@ scipy==1.4.1
 pillow==9.3.0
 cython==0.29.32
 matplotlib==3.5.3
-scikit-image==0.19.3
+scikit-image==0.18.3
 tensorflow==2.2.0
 keras==2.1.0
 brotli==1.0.9
