@@ -43,6 +43,15 @@ PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1
 ```
 ⇒　インストール前でも動作してたような気がするが…
 
+ロードエラーが発生していたため、以下に置き換えた。.hのファイル名が変更になっているので、確認時に注意。
+```
+PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\include\cudnn.h" -Pattern "#define CUDNN_MAJOR" -Context 0,2
+
+> (ommit)\v10.1\include\cudnn.h:57:#define CUDNN_MAJOR 7
+  (ommit)\v10.1\include\cudnn.h:58:#define CUDNN_MINOR 6
+  (ommit)\v10.1\include\cudnn.h:59:#define CUDNN_PATCHLEVEL 5
+```
+
 # Setup
 Start 'x64 Native Tools Command Prompt for VS 2022'.
 ```
@@ -121,6 +130,11 @@ from tensorflow.python.client import device_lib
 Could not load dynamic library 'cudart64_101.dll'; dlerror: cudart64_101.dll not found
 ```
 Changed CUDA v11.7 to v10.1. In my case, set `CUDA_PATH=%CUDA_PATH_V10_1%`. => resolved.
+
+## Could not load dynamic library 'cudnn64_7.dll'
+
+install cudnn-10.1-windows10-x64-v7.6.5.32.zip => resolved.
+
 
 ## 検出結果の表示がおかしい
 
