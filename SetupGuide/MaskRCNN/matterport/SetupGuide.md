@@ -49,6 +49,26 @@ OS バージョン:          10.0.19043 N/A ビルド 19043
 >conda --version
 conda 22.9.0
 ```
+```
+>where nvcc.exe
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin\nvcc.exe
+>where nvvp.exe
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\libnvvp\nvvp.exe
+
+>nvcc -V
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2022 NVIDIA Corporation
+Built on Wed_Jun__8_16:59:34_Pacific_Daylight_Time_2022
+Cuda compilation tools, release 11.7, V11.7.99
+Build cuda_11.7.r11.7/compiler.31442593_0
+```
+```
+PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\include\cudnn_version.h" -Pattern "#define CUDNN_MAJOR" -Context 0,2
+
+> (omit)cudnn_version.h:57:#define CUDNN_MAJOR 8
+  (omit)cudnn_version.h:58:#define CUDNN_MINOR 5
+  (omit)cudnn_version.h:59:#define CUDNN_PATCHLEVEL 0
+```
 
 # GPU Version Setup (use conda YAML)
 
@@ -56,22 +76,23 @@ Start 'x64 Native Tools Command Prompt for VS 2022'.
 ```
 # cd <base_dir>
 
-conda env create –f mask_rcnn_gpu.yml --name MaskRCNN_GPU
-conda activate MaskRCNN_GPU
+conda env create –f conda_matterport@Mask_RCNN.yml --name matterport-Mask_RCNNYML
+conda activate matterport-Mask_RCNNYML
 
 pip install opencv-python==4.0.0.21
+
+#git clone https://github.com/philferriere/cocoapi.git
+#cd cocoapi\PythonAPI
+#python setup.py build_ext install
+pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
 
 mkdir matterport && cd matterport
 git clone https://github.com/matterport/Mask_RCNN.git
 cd Mask_RCNN
 python setup.py install
 
-git clone https://github.com/philferriere/cocoapi.git
-cd cocoapi\PythonAPI
-python setup.py build_ext install
-
+jupyter-notebook
 # go to samples dir.
-jupyter notebook
 # run demo.py
 ```
 

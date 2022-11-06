@@ -1,4 +1,4 @@
-name: MaskRCNN_GPU
+name: matterport-Mask_RCNN
 channels:
   - conda-forge
   - defaults
