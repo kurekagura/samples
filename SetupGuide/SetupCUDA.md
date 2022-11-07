@@ -11,19 +11,23 @@ To verify.
 >where nvvp
 ```
 
-## Examaples
+## Examples
+
 ```
 CUDA_PATH=%CUDA_PATH_V?_?%
 
 CUDNN_PATH=%CUDA_PATH%
 
+Path=%CUDA_PATH%\bin;%CUDA_PATH%\libnvvp;<others>
+
+CUDA_PATH_V10_0=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0
+CUDA_PATH_V10_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1
 CUDA_PATH_V10_2=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2
 CUDA_PATH_V11_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+CUDA_PATH_V11_3=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3
 CUDA_PATH_V11_5=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5
 CUDA_PATH_V11_6=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6
 CUDA_PATH_V11_7=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7
-
-Path=%CUDA_PATH%\bin;%CUDA_PATH%\libnvvp;<others>
 ```
 
 # Verification
@@ -36,8 +40,22 @@ Cuda compilation tools, release 11.6, V11.6.124
 Build cuda_11.6.r11.6/compiler.31057947_0
 ```
 
-PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v?.?\include\cudnn_version.h" -Pattern "#define CUDNN_MAJOR" -Context 0,2
+CUDNNは、ヘッダーファイル名がバージョンによって異なるので注意。
+
+CUDNN7以前：`cudnn.h`  
+CUDNN8以降：`cudnn_version.h`
 ```
+# CUDNN7以前
+PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.?\include\cudnn.h" -Pattern "#define CUDNN_MAJOR" -Context 0,2
+
+> C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\include\cudnn.h:57:#define CUDNN_MAJOR 7
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\include\cudnn.h:58:#define CUDNN_MINOR 6
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\include\cudnn.h:59:#define CUDNN_PATCHLEVEL 5
+```
+```
+# CUDNN8以降
+PS>Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.?\include\cudnn_version.h" -Pattern "#define CUDNN_MAJOR" -Context 0,2
+
 > C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\include\cudnn_version.h:57:#define CUDNN_MAJOR 8
   C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\include\cudnn_version.h:58:#define CUDNN_MINOR 4
   C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\include\cudnn_version.h:59:#define CUDNN_PATCHLEVEL 1
@@ -53,3 +71,10 @@ v10.0（cuda_10.0.130_411.31_win10.exe）,v10.2（cuda_10.2.89_441.22_win10.exe�
 その後、v10.2を再度インストールすることができた（先述の3つのexeを順次インストール。この時は互換性のチェックは数秒で終了）。
 
 ※旧バージョンはカスタムでCUDAのみをインストール。
+
+# What is it?
+
+## cusolver64_11.dll
+
+[tensorflow-nightly-gpu looking for cusolver64_10.dll on a cuDNN 11.1 installation #44291](https://github.com/tensorflow/tensorflow/issues/44291)
+>renaming cusolver64_11.dll to cusolver64_10.dll
