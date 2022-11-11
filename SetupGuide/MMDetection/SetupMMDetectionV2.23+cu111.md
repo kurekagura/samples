@@ -121,6 +121,9 @@ python demo/webcam_demo.py --device cuda:0 chkp/faster_rcnn_r50_fpn_1x_coco.py c
 python demo/video_demo.py --device cuda:0 demo/demo.mp4 chkp/faster_rcnn_r50_fpn_1x_coco.py chkp/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth --out result.mp4
 
 #MASK R-CNN
+mim download mmdet --config mask_rcnn_r50_fpn_1x_coco --dest ./chkp
+python demo/image_demo.py --device cuda:0 demo/demo.jpg chkp/mask_rcnn_r50_fpn_1x_coco.py chkp/mask_rcnn_r50_fpn_1x_coco_20200205-d4b0c5d6.pth
+
 mim download mmdet --config mask_rcnn_x101_64x4d_fpn_2x_coco --dest ./chkp
 python demo/image_demo.py --device cuda:0 demo/demo.jpg chkp/mask_rcnn_x101_64x4d_fpn_2x_coco.py chkp/mask_rcnn_x101_64x4d_fpn_2x_coco_20200509_224208-39d6f70c.pth
 #mimダウンロードが途中で失敗している場合は、エラーになる。再度ダウンロードすると解決した。
