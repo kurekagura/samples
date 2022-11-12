@@ -115,6 +115,29 @@ python demo/image_demo.py --device cpu demo/demo.jpg chkp/mask_rcnn_r50_fpn_1x_c
 python demo/image_demo.py --device cuda:0 demo/demo.jpg chkp/mask_rcnn_r50_fpn_1x_coco.py chkp/mask_rcnn_r50_fpn_1x_coco_20200205-d4b0c5d6.pth
 ```
 
+# Verify the installation by trainnig.
+
+## [Test existing models on standard datasets](https://mmdetection.readthedocs.io/en/stable/1_exist_data_model.html#test-existing-models-on-standard-datasets)
+
+```
+PS>python tools/test.py chkp/mask_rcnn_r50_fpn_1x_coco.py `
+chkp/mask_rcnn_r50_fpn_1x_coco_20200205-d4b0c5d6.pth `
+--out result-mask_rcnn.pkl `
+--eval bbox segm
+```
+git checkout tags/v2.24.0
+```
+Traceback (most recent call last):
+  File "tools/test.py", line 16, in <module>
+    from mmdet.apis import multi_gpu_test, single_gpu_test
+  File "o:\src\open-mmlab\mmdetection\mmdet\__init__.py", line 26, in <module>
+    f'MMCV=={mmcv.__version__} is used but incompatible. ' \
+AssertionError: MMCV==1.6.0 is used but incompatible. Please install mmcv>=1.3.17, <=1.5.0.
+```
+git checkout tags/v2.24.1
+
+=> Resolved.
+
 # memo
 ```
 conda list |findstr "pytorch torchvision torchaudio pytorch-cuda blas"
@@ -142,5 +165,5 @@ conda uninstall pytorch torchvision torchaudio pytorch-cuda
 ```
 
 ```
-#pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
 ```
