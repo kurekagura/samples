@@ -1,4 +1,4 @@
-name: MMDetection2.23
+name: MMDetection2.23cu111
 channels:
   - pytorch
   - conda-forge

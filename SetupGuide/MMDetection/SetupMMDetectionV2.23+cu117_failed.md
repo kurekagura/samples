@@ -74,14 +74,19 @@ conda activate MMDetection2.23cu117
 #conda install pytorch==1.9.1 torchvision==0.10.1 torchaudio==0.9.1 cudatoolkit=11.7 blas==2.116 -c pytorch -c conda-forge -y
 
 #1.13.0(stable) Official Command
-conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia -y
+#conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia -y
+
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
+
+#With specified versions
+#conda install pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.7 blas==1.0 -c pytorch -c nvidia -y
 
 pip install opencv-python==4.6.0.66
 
 pip install openmim==0.3.2
 
 #memo 2.23.0 mmcv-full>=1.3.17, \<1.5.0
-set DISTUTILS_USE_SDK=1
+#set DISTUTILS_USE_SDK=1
 pip install mmcv-full==1.5.0
 ```
 
@@ -201,4 +206,46 @@ pip install torch==x
 1.11.0, 
 1.12.0, 1.12.1, 
 1.13.0(x)
+```
+
+## PyTorchのインストールを間違っていないか？
+
+conda installとpip3 installの両方で再確認したが結果は同じ（NG）。
+
+Stable (1.13.0) Official Command
+```
+conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+```
+```
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
+```
+
+# What PyTorch installed?
+
+After conda install
+```
+conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+
+conda list |findstr "pytorch torchvision torchaudio pytorch-cuda blas"
+
+blas                      1.0                         mkl
+libcublas                 11.11.3.6                     0    nvidia
+libcublas-dev             11.11.3.6                     0    nvidia
+pytorch                   1.13.0          py3.7_cuda11.7_cudnn8_0    pytorch
+pytorch-cuda              11.7                 h67b0de4_0    pytorch
+pytorch-mutex             1.0                        cuda    pytorch
+torchaudio                0.13.0                   pypi_0    pypi
+torchvision               0.14.0                   pypi_0    pypi
+```
+
+After pip3 install
+```
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
+
+conda list |findstr "torch torchvision torchaudio blas"
+torch                     1.13.0+cu117             pypi_0    pypi
+torchaudio                0.13.0+cu117             pypi_0    pypi
+torchvision               0.14.0+cu117             pypi_0    pypi
+
+* blasがない。
 ```
