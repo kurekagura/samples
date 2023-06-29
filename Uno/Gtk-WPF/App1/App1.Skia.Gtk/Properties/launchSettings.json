@@ -7,7 +7,7 @@
       "commandName": "WSL2",
       "distributionName": "Ubuntu-22.04",
       "environmentVariables": {
-        "DISPLAY": "xxx.xxx.xxx.xxx:0"
+        "DISPLAY": "192.168.1.5:0"
       }
     }
   }

@@ -92,10 +92,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="H265Encoder.cpp" />
     <ClCompile Include="libavcv.cpp" />
     <ClCompile Include="H264Decoder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="H265Encoder.hpp" />
     <ClInclude Include="libavcv.h" />
     <ClInclude Include="H264Decoder.hpp" />
   </ItemGroup>

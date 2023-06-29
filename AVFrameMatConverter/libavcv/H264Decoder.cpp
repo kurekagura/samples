@@ -221,3 +221,26 @@ std::vector<cv::Mat>  H264Decoder::decode_to_mat() {
 	sws_freeContext(swsctx);
 	return matVec;
 }
+
+void H264Decoder::dump()
+{
+	//先頭フレームインデックスへSeek
+	//if (av_seek_frame(avfmtctx, avstream->index, 0, AVSEEK_FLAG_FRAME | AVSEEK_FLAG_BACKWARD) < 0)
+	//	throw "Failed: av_seek_frame";
+	//avcodec_flush_buffers(avcodecctx); //av_seek_frameの直後，バッファをフラッシュ．
+
+	std::vector<int64_t> iframes;
+	auto avframeVec = this->decode();
+	for (int fidx = 0; fidx < avframeVec.size(); fidx++) {
+		auto& frame = avframeVec[fidx];
+		if (frame->pict_type == AVPictureType::AV_PICTURE_TYPE_I)
+			iframes.push_back(fidx);
+		std::cout << cv::format("frame=%d %c", fidx, av_get_picture_type_char(frame->pict_type)) << std::endl;
+	}
+
+	std::cout << "I frames : ";
+	for (auto iframe : iframes) {
+		std::cout << iframe << ",";
+	}
+	std::cout << std::endl;
+}

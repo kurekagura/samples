@@ -1,4 +1,9 @@
-﻿#include <memory>
+﻿/*
+* べたに記述したエンコードのコード．
+* BMPファイルをOpenCVのMatへ読み込み，AVFrameへ変換している．
+* 最終的にmp4を出力する．
+*/
+#include <memory>
 #include <iostream>
 #include <sstream>
 #include <vector>

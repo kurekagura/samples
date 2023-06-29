@@ -67,9 +67,24 @@ namespace ipc_wv2
 
             webView.CoreWebView2.Navigate(htmlPath);
             webView.CoreWebView2.WebMessageReceived += WebMessageReceived;
+
+            webView.CoreWebView2.AddWebResourceRequestedFilter("*", Microsoft.Web.WebView2.Core.CoreWebView2WebResourceContext.All);
+            webView.CoreWebView2.WebResourceResponseReceived += CoreWebView2_WebResourceResponseReceived;
+            webView.CoreWebView2.IsDocumentPlayingAudioChanged += CoreWebView2_IsDocumentPlayingAudioChanged;
+
         }
 
-        void WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs args)
+        private void CoreWebView2_IsDocumentPlayingAudioChanged(object? sender, object e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void CoreWebView2_WebResourceResponseReceived(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        void WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
             String serializedMessage = args.WebMessageAsJson;
 

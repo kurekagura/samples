@@ -18,6 +18,7 @@
     <Grid>
         <StackPanel Margin="5">
             <ListView Height="100" x:Name="lvProducts"
+                      SelectionChanged="SelectionChanged"
                       >
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -40,6 +41,7 @@
                     FontSize="20"
                     Content="Delete"
                     Click="DeleteButton_Click"/>
+            <Image x:Name="imMedia" Width="300" Height="300"/>
         </StackPanel>
     </Grid>
 </Page>

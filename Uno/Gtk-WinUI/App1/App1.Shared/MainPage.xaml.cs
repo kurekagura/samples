@@ -1,6 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System.Linq;
+using Windows.Storage;
+using System;
 
 namespace App1
 {
@@ -55,6 +58,24 @@ namespace App1
                 var data = dbctx.Products.ToList();
 
                 lvProducts.ItemsSource = data;
+            }
+        }
+
+        async private void SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var lv = (ListView)sender;
+            var prod = (Product)lv.SelectedValue;
+
+            //WriteableBitmap wb = new WriteableBitmap(100,100);
+            if (!string.IsNullOrEmpty(prod.MediaPath))
+            {
+                var sf = await StorageFile.GetFileFromPathAsync(prod.MediaPath);
+                using (var s = await sf.OpenReadAsync())
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.SetSource(s);
+                    this.imMedia.Source = bitmap;
+                }
             }
         }
     }

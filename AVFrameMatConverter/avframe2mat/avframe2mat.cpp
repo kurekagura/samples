@@ -1,4 +1,9 @@
-﻿#pragma warning(disable : 26812)
+﻿/*
+* べたに記述したデコードのコード．
+* mp4ファイルを読み取り，デコードしてAVFrameにする．
+* AVFrameから表示目的にOpenCVのMatへ変換している．
+*/
+#pragma warning(disable : 26812)
 
 #include <memory>
 #include <iostream>

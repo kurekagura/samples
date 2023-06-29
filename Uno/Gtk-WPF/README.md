@@ -103,3 +103,16 @@ rm packages-microsoft-prod.deb
 2. [Additional setup for Linux or WSL](https://platform.uno/docs/articles/get-started-with-linux.html?tabs=ubuntu1804%2Cwindows)
 3. [Ubuntu に .NET SDK または .NET ランタイムをインストールする](https://docs.microsoft.com/ja-jp/dotnet/core/install/linux-ubuntu#2204)
 4. [Running an X server with WSL2](https://skeptric.com/wsl2-xserver/)
+
+# Nugetしたもの
+
+Uno.WinUI
+
+```xml
+<Page.Resources>
+  <Style TargetType="Button">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+  </Style>
+</Page.Resources>
+```

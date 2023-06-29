@@ -6,10 +6,15 @@
 /// </summary>
 /// <param name="decoderElement">mfvp9enc(ng), QSV->?, NVCODEC->? ,ON2=vp9enc</param>
 /// <param name="outputPath"></param>
-void play_to_validate(const cv::String decoderElement, const cv::String outputPath) {
+bool play_to_validate(const cv::String decoderElement, const cv::String outputPath) {
 
 	cv::String gst_cmd_cap = cv::format("filesrc location=\"%s\" !matroskademux !%s !videoconvert !appsink", outputPath.c_str(), decoderElement.c_str());
 	cv::VideoCapture capture(gst_cmd_cap, cv::CAP_GSTREAMER);
+	if (!capture.isOpened())
+	{
+		std::cerr << "Failed : to open VideoCapture(CAP_GSTREAMER) for WebM." << std::endl;
+		return false;
+	}
 
 	const cv::String windName = cv::format("Validating by %s", decoderElement.c_str());
 	while (true)
@@ -23,6 +28,8 @@ void play_to_validate(const cv::String decoderElement, const cv::String outputPa
 		if (cv::waitKey(1) == 'q')
 			break;
 	}
+	cv::destroyWindow(windName);
+	return true;
 }
 
 /*
@@ -60,7 +67,8 @@ int main()
 
 	const cv::String outputPath("C:\\\\dev\\\\samplevideo\\\\out-cv_gst_vp9.webm.");
 
-	cv::String gst_cmd_writer = cv::format("appsrc !videoconvert !%s !matroskamux !filesink location=\"%s\"", encoderElement.c_str(), outputPath.c_str());
+	//matroskamux includes webmmux?
+	cv::String gst_cmd_writer = cv::format("appsrc !videoconvert !%s !webmmux !filesink location=\"%s\"", encoderElement.c_str(), outputPath.c_str());
 	cv::VideoWriter writer(gst_cmd_writer, cv::CAP_GSTREAMER, out_fourcc, out_fps, cv::Size(out_width, out_height), true);
 
 	if (!writer.isOpened())
@@ -84,7 +92,10 @@ int main()
 
 	cv::destroyWindow(windName);
 
-	play_to_validate(decoderElement, outputPath);
-
-	return 0;
+	bool isValid = play_to_validate(decoderElement, outputPath);
+	if (!isValid)
+	{
+		std::cerr << "Failed : to validate the output." << std::endl;
+	}
+	return isValid ? 0 : -1;
 }
